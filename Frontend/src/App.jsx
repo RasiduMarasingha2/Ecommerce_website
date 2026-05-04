@@ -1,13 +1,20 @@
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import UserLayout from './components/Layout/UserLayout.jsx'
 import './App.css'
+
 
 function App() {
  
   return (
    
-    <h1 className='text-3xl text-blue-800'>Welcome to My App</h1>
+   <BrowserRouter>
+     <Routes>
+       <Route path="/" element={<UserLayout />} />
+       {/* usetr */ }
+     </Routes>
 
+   </BrowserRouter>
   )
 }
 
-export default App
+export default App;
