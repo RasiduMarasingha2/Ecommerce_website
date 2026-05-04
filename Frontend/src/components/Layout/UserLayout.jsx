@@ -4,7 +4,7 @@ const UserLayout = () => {
   return (
     <>
       {/* Header */}
-      <Header />
+      <Header  />
 
       {/* Main Content */}
 
