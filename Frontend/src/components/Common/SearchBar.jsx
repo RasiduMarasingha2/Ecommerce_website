@@ -30,14 +30,14 @@ function SearchBar() {
   return (
     <div className="relative w-full max-w-xl mx-auto">
 
-      {/* 🔍 ICON (closed state) */}
+      {/* ICON closed state */}
       {!isOpen && (
         <button onClick={() => setIsOpen(true)}>
           <HiMagnifyingGlass className="h-6 w-6 text-gray-700" />
         </button>
       )}
 
-      {/* 🔥 SEARCH BAR (open state) */}
+      {/*  SEARCH BAR open ) */}
       {isOpen && (
         <div className="w-full">
 
@@ -60,7 +60,7 @@ function SearchBar() {
               }}
             />
 
-            {/* ❌ CLOSE */}
+            {/*  CLOSE */}
             <button
               onClick={() => {
                 setIsOpen(false);
@@ -72,7 +72,7 @@ function SearchBar() {
             </button>
           </div>
 
-          {/* 📦 DROPDOWN */}
+          {/* DROPDOWN */}
           {searchTerm && (
             <div className="absolute w-full bg-white shadow-md mt-1 rounded-md z-50">
 
@@ -95,7 +95,7 @@ function SearchBar() {
                 </div>
               )}
 
-              {/* 🔵 MOBILE SEARCH BUTTON */}
+              {/* SEARCH BUTTON */}
               <button
                 onClick={handleSearch}
                 className="w-full bg-black text-white py-2 rounded-b-md"

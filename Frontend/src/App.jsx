@@ -1,19 +1,23 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import UserLayout from './components/Layout/UserLayout.jsx'
 import './App.css'
+import Home from './pages/Home.jsx'
 
 
-function App() {
+const App = () => {
  
   return (
    
    <BrowserRouter>
      <Routes>
-       <Route path="/" element={<UserLayout />} />
-       {/* usetr */ }
-     </Routes>
+       <Route path="/" element={<UserLayout />} >
+       <Route index element={<Home />} />
+     </Route>
+     <Route>{/* Admin Layout */}</Route>
+    </Routes>
 
    </BrowserRouter>
+   
   )
 }
 
