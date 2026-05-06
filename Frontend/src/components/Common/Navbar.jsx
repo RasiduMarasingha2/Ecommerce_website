@@ -37,7 +37,7 @@ const Navbar = () => {
         </Link>
 
         <Link to="/" className="hover:text-black text-sm text-gray-700 font-medium uppercase">
-          Home & Living
+          Home & Living 
         </Link>
 
         <Link to="/" className="hover:text-black text-sm text-gray-700 font-medium uppercase">

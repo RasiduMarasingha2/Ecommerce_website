@@ -14,7 +14,7 @@ function Hero() {
     </h1>
 
     <p className="text-xs sm:text-sm md:text-lg mb-6 leading-relaxed">
-      Explore our exclusive collection of top-selling electronics, home & living, and gaming products. Don't miss out on the best deals and latest trends in tech and lifestyle.
+      Explore our exclusive collection of top selling electronics, home & living, and gaming products. Don't miss out on the best deals and latest trends in tech and lifestyle.
     </p>
     <Link
     to="#"
