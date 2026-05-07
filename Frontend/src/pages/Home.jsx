@@ -4,7 +4,7 @@ import ProductDetails from "../components/Products/ProductDetails.jsx";
 import ProductGrid from "../components/Products/ProductGrid.jsx";
 
 const placeholderProducts = [
-  
+
 ] 
 
 
@@ -24,7 +24,7 @@ const Home = () => {
 
         <h2 className="text-3xl text-center font-bold mb-4">
                   
-                Top Wears for Women
+                All Products
         </h2>
           
           < ProductGrid products={placeholderProducts} />

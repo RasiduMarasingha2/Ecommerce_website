@@ -63,13 +63,29 @@ const Navbar = () => {
           <HiOutlineShoppingBag className="h-6 w-6 text-gray-700" />
         </button>
 
-         <SearchBar/>
+        <div className="flex items-center gap-2">
+          <SearchBar/>
 
-          <button onClick={toggleNavDrawer} className="md:hidden">
+          {/* Login & Register Buttons */}
+          <div className="hidden sm:flex items-center gap-2">
+            <Link 
+              to="/login" 
+              className="px-3 py-1.5 text-xs font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition"
+            >
+              Login
+            </Link>
+            <Link 
+              to="/register" 
+              className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition"
+            >
+              Register
+            </Link>
+          </div>
+        </div>
+
+        <button onClick={toggleNavDrawer} className="md:hidden">
           <HiBars3BottomRight className="h-6 w-6 text-gray-700" />
         </button>
-
-
 
       </div>
 
@@ -84,7 +100,7 @@ const Navbar = () => {
       </div>
       <div className="p-4">
              <h2 className="text-xl font-semibold mb-4">Menu</h2>
-             <nav className="space-y-4">
+             <nav className="space-y-4 mb-6">
 
               <Link to="#" onClick={toggleNavDrawer} className="block text-gray-600 hover:text-black">
                 Electronics              
@@ -102,6 +118,24 @@ const Navbar = () => {
                 Toys & Baby Products              
               </Link>
              </nav>
+
+             {/* Mobile Login & Register Buttons */}
+             <div className="border-t pt-4 space-y-3 sm:hidden">
+               <Link 
+                 to="/login" 
+                 onClick={toggleNavDrawer}
+                 className="block w-full px-4 py-2 text-center text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50 transition"
+               >
+                 Login
+               </Link>
+               <Link 
+                 to="/register" 
+                 onClick={toggleNavDrawer}
+                 className="block w-full px-4 py-2 text-center text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700 transition"
+               >
+                 Register
+               </Link>
+             </div>
       </div>
       </div>
     </>
