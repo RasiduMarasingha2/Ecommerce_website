@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { toast } from "sonner";
+import ProductGrid from "./ProductGrid";
+
 
 const selectedProduct = {
   name: "Stylish Sneakers",
@@ -8,7 +11,7 @@ const selectedProduct = {
     "Experience the perfect blend of style and comfort with our Stylish Sneakers. Crafted with premium materials, these sneakers feature a sleek design that effortlessly complements any outfit.",
   brand: "FashionCo",
   material: "Leather",
-  sizes: ["6", "7", "8", "9", "10"],
+  sizes: ["6 ", "7", "8", "9", "10"],
   colors: ["Black", "White", "Red"],
   image: [
     {
@@ -26,7 +29,36 @@ const selectedProduct = {
   ],
 };
 
+const similarProducts = [
+    {
+
+      _id: "1",
+      name: "Product 1",
+      price: 49.99,
+      image: [{ url: "https://picsum.photos/500/500?random=1" }],
+
+    },
+    {
+
+      _id: "2",
+      name: "Product 2",
+      price: 49.99,
+      image: [{ url: "https://picsum.photos/500/500?random=1" }],
+    
+    },
+    {
+
+      _id: "3",
+      name: "Product 3",
+      price: 49.99,
+      image: [{ url: "https://picsum.photos/500/500?random=1" }],
+
+    },
+
+  ]
+
 const ProductDetails = () => {
+
   const [mainImage, setMainImage] = useState(
     selectedProduct.image[0].url
   );
@@ -48,7 +80,7 @@ const ProductDetails = () => {
   // Add to cart handler
   const handleAddToCart = () => {
     if (!selectedSize || !selectedColor) {
-      alert("Please select size and color!");
+     toast.error("Please select size and color");
       return;
     }
 
@@ -62,7 +94,7 @@ const ProductDetails = () => {
     };
 
     console.log("Added to cart:", cartItem);
-    alert("Added to cart!");
+    toast.success("Product added to cart!");
   };
 
   return (
@@ -187,6 +219,26 @@ const ProductDetails = () => {
             >
               Add to Cart
             </button>
+
+            <div className="mt-10 text-gray-700">
+                  
+               <h3 className="text-xl font-bold mb-4"> Product Details</h3>
+               <table className="w-full text-left text-sm text-gray-600">
+                       
+                        <tbody>
+                          <tr>
+                                <td className="py-1">Brand</td>
+                                <td className="py-1">{selectedProduct.brand}</td>
+                          </tr>
+                          <tr>
+                                <td className="py-1">Material</td>
+                                <td className="py-1">{selectedProduct.material}</td>
+                          </tr>
+                          </tbody>
+
+               </table>
+            </div>
+
           </div>
         </div>
 
@@ -203,7 +255,15 @@ const ProductDetails = () => {
               }`}
             />
           ))}
-        </div>
+        </div> 
+          <div className="mt-20">
+                       <h2 className=" text-2xl text-center font-medium mb-4">
+                               
+                               You may also like
+                       </h2>
+                       <ProductGrid products={similarProducts} />
+          </div>
+
       </div>
     </div>
   );
