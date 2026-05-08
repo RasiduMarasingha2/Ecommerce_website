@@ -1,304 +1,139 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
-import { FiArrowLeft } from 'react-icons/fi'
-import { toast } from 'sonner'
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../redux/slices/authSlice';
+import axiosClient from '../api/axiosClient';
+import { toast } from 'sonner';
 
 const Register = () => {
-  const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    agreeToTerms: false
-  })
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
-
-  const validateForm = () => {
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
-      toast.error('Please fill all required fields')
-      return false
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(formData.email)) {
-      toast.error('Please enter a valid email')
-      return false
-    }
-
-    // Phone validation (10 digits)
-    if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ''))) {
-      toast.error('Please enter a valid 10-digit phone number')
-      return false
-    }
-
-    // Password strength
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters long')
-      return false
-    }
-
-    // Password match
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match')
-      return false
-    }
-
-    // Terms agreement
-    if (!formData.agreeToTerms) {
-      toast.error('Please agree to the Terms and Conditions')
-      return false
-    }
-
-    return true
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    if (!validateForm()) return
-
-    setLoading(true)
-
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      // Replace with your actual API endpoint
-      const response = await fetch('http://localhost:5000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password
-        })
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        toast.success('Registration successful! Please login.')
-        navigate('/login')
-      } else {
-        toast.error(data.message || 'Registration failed')
-      }
+        const { data } = await axiosClient.post('/auth/register', { name, email, password });
+        dispatch(setCredentials(data));
+        toast.success('Account created successfully!');
+        navigate('/'); // Automatically move to home page
     } catch (error) {
-      toast.error('Connection error. Please try again.')
-      console.error('Registration error:', error)
+        toast.error(error.response?.data?.message || 'Failed to register');
     } finally {
-      setLoading(false)
+        setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-[#002200] to-black relative overflow-hidden font-sans py-12">
+      
+      {/* Subtle Grid Overlay on Background */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-screen pointer-events-none"></div>
+
       {/* Back to Home Button */}
-      <Link 
-        to="/" 
-        className="absolute top-6 left-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium transition"
+      <motion.button 
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        onClick={() => navigate('/')}
+        className="absolute top-8 left-8 z-50 flex items-center text-gray-400 hover:text-white transition-colors group"
       >
-        <FiArrowLeft size={20} />
-        Back to Home
-      </Link>
+        <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+        <span className="font-medium text-sm">Back to Home</span>
+      </motion.button>
+      
+      {/* Apple Software Update Style Glowing Frame Wrapper */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-md z-10 p-[3px] rounded-[2rem] overflow-hidden shadow-[0_20px_60px_rgba(0,128,0,0.1)]"
+      >
+        {/* Animated Gradient Border (The Apple Glow - Green) */}
+        <motion.div 
+            animate={{ rotate: -360 }}
+            transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
+            className="absolute inset-[-50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,transparent_0_280deg,#008000_360deg)] opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-bl from-[#008000]/20 via-transparent to-[#008000]/20 blur-xl"></div>
+        <div className="absolute inset-0 rounded-[2rem] border border-gray-200"></div>
 
-      <div className="w-full max-w-md">
-        {/* Card */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Create Account</h1>
-            <p className="text-gray-600 mt-2">Join us and start shopping</p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Name Row */}
-            <div className="grid grid-cols-2 gap-4">
-              {/* First Name */}
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="John"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-sm"
-                />
-              </div>
-
-              {/* Last Name */}
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Doe"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="john@example.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-              />
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number (Optional)
-              </label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="+1 (555) 000-0000"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-              />
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter a strong password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        {/* Inner Glass Card */}
+        <div className="relative w-full h-full p-10 bg-white/90 backdrop-blur-2xl rounded-[calc(2rem-3px)]">
+            <div className="text-center mb-10">
+                <motion.div 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-tr from-[#008000] to-green-400 p-[2px]"
                 >
-                  {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">At least 6 characters</p>
+                    <div className="w-full h-full bg-white rounded-full flex items-center justify-center shadow-inner">
+                        <svg className="w-6 h-6 text-[#008000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                    </div>
+                </motion.div>
+                <h2 className="text-3xl font-black text-black tracking-tight">Sign Up</h2>
+                <p className="text-gray-500 mt-2 text-sm font-medium">Join the next generation.</p>
             </div>
 
-            {/* Confirm Password */}
+            <form onSubmit={submitHandler} className="space-y-5">
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Re-enter your password"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                <input 
+                    type="text" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008000]/50 focus:border-[#008000] transition-all"
+                    placeholder="Full Name"
+                    required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showConfirmPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
-                </button>
-              </div>
+            </div>
+            <div>
+                <input 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008000]/50 focus:border-[#008000] transition-all"
+                    placeholder="Email ID"
+                    required
+                />
+            </div>
+            <div>
+                <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008000]/50 focus:border-[#008000] transition-all"
+                    placeholder="Password"
+                    required
+                />
             </div>
 
-            {/* Terms Checkbox */}
-            <div className="flex items-start">
-              <input
-                type="checkbox"
-                id="agreeToTerms"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleChange}
-                className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-2 focus:ring-green-500 cursor-pointer mt-1"
-              />
-              <label htmlFor="agreeToTerms" className="ml-3 text-sm text-gray-600">
-                I agree to the{' '}
-                <a href="#" className="text-green-600 hover:text-green-700 font-medium">
-                  Terms and Conditions
-                </a>{' '}
-                and{' '}
-                <a href="#" className="text-green-600 hover:text-green-700 font-medium">
-                  Privacy Policy
-                </a>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition duration-300 mt-6"
+            <motion.button 
+                disabled={loading}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="w-full py-4 mt-6 rounded-xl bg-black text-white font-bold hover:bg-[#008000] hover:shadow-[0_0_20px_rgba(0,128,0,0.4)] transition-all duration-300 disabled:opacity-50 flex justify-center items-center"
             >
-              {loading ? 'Creating Account...' : 'Create Account'}
-            </button>
-          </form>
+                {loading ? (
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                ) : 'Continue'}
+            </motion.button>
+            </form>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">or</span>
-            </div>
-          </div>
-
-          {/* Login Link */}
-          <p className="text-center text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" className="text-green-600 hover:text-green-700 font-semibold">
-              Login here
-            </Link>
-          </p>
+            <p className="mt-8 text-center text-sm font-medium text-gray-600">
+                Already have an account? <a href="/login" className="text-[#008000] font-bold hover:underline transition-colors">Sign In</a>
+            </p>
         </div>
-      </div>
+      </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
