@@ -18,12 +18,14 @@ const userSchema = new mongoose.Schema({
     preferences: { type: [String], default: [] }, // AI input
     recommendationAnswers: { type: Map, of: String }, // AI prolog answers
     sellerProfile: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
-    adminProfile: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' }
+    adminProfile: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+    resetPasswordOTP: { type: String },
+    resetPasswordExpires: { type: Date }
 }, { timestamps: true });
 
 // Password Hashing Middleware
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
+userSchema.pre('save', async function () {
+    if (!this.isModified('password')) return;
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
 });

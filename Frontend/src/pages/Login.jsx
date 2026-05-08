@@ -101,7 +101,7 @@ const Login = () => {
             </div>
 
             <div className="flex items-center justify-between px-1">
-                <a href="#" className="text-sm font-bold text-[#008000] hover:text-green-700 transition-colors">Forgot password?</a>
+                <button type="button" onClick={() => navigate('/forgot-password')} className="text-sm font-bold text-[#008000] hover:text-green-700 transition-colors">Forgot password?</button>
             </div>
 
             <motion.button 

@@ -49,7 +49,7 @@ const Topbar = () => {
         <div className="flex justify-between items-center h-16">
           
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center cursor-pointer">
+          <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
             <span className="text-2xl font-extrabold tracking-tighter text-black">
               E<span className="text-[#008000]">COMMERCE</span>
             </span>

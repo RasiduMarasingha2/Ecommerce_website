@@ -1,23 +1,24 @@
 const nodemailer = require('nodemailer');
 
 const sendEmail = async (options) => {
-    // Note: Provide SMTP credentials in .env
+    // Create a transporter using Gmail
     const transporter = nodemailer.createTransport({
-        service: process.env.EMAIL_SERVICE, // e.g., 'Gmail'
+        service: 'gmail',
         auth: {
             user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
+            pass: process.env.EMAIL_PASS,
+        },
     });
 
+    // Define email options
     const mailOptions = {
-        from: `Ecommerce Admin <${process.env.EMAIL_USER}>`,
+        from: `Ecommerce Platform <${process.env.EMAIL_USER}>`,
         to: options.email,
         subject: options.subject,
-        text: options.message,
-        html: options.html // Optional HTML support
+        html: options.html,
     };
 
+    // Send the email
     await transporter.sendMail(mailOptions);
 };
 

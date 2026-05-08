@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     try {
-        const { data } = await axiosClient.post('/auth/register', { name, email, password });
+        const { data } = await axiosClient.post('/auth/register', { name, email, password, phone });
         dispatch(setCredentials(data));
         toast.success('Account created successfully!');
         navigate('/'); // Automatically move to home page
@@ -97,6 +98,16 @@ const Register = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008000]/50 focus:border-[#008000] transition-all"
                     placeholder="Email ID"
+                    required
+                />
+            </div>
+            <div>
+                <input 
+                    type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full px-5 py-4 rounded-xl bg-gray-50 border border-gray-200 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#008000]/50 focus:border-[#008000] transition-all"
+                    placeholder="Phone Number (+94 7X XXX XXXX)"
                     required
                 />
             </div>
