@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Environment, Float, ContactShadows } from '@react-three/drei';
 import { motion } from 'framer-motion';
@@ -6,24 +6,76 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../redux/slices/productSlice';
 import FloatingProductModel from '../components/3d/FloatingProductModel';
 import TiltCard from '../components/ui/TiltCard';
+import axiosClient from '../api/axiosClient';
 
 const Home = () => {
   const dispatch = useDispatch();
   const filteredProducts = useSelector((state) => state.product.filteredProducts);
   const selectedCategory = useSelector((state) => state.product.selectedCategory);
 
+  const [activeOffer, setActiveOffer] = useState(null);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+
   useEffect(() => {
-    // Simulating API call for products. In production, replace with axios fetch.
-    const mockProducts = [
-      { id: 1, title: 'Pro Gaming Headset', price: 149.99, image: '', category: 'gaming' },
-      { id: 2, title: 'Mechanical Keyboard XT', price: 129.00, image: '', category: 'gaming' },
-      { id: 3, title: 'Wireless RGB Mouse', price: 89.50, image: '', category: 'gaming' },
-      { id: 4, title: 'Elite Controller', price: 199.99, image: '', category: 'gaming' },
-      { id: 5, title: 'Studio Earpods', price: 249.00, image: '', category: 'electronics' },
-      { id: 6, title: 'Smart Watch Series 9', price: 399.00, image: '', category: 'electronics' },
-    ];
-    dispatch(setProducts(mockProducts));
+    // Fetch real products from backend
+    const fetchAllProducts = async () => {
+      try {
+        const { data } = await axiosClient.get('/products');
+        // Transform backend product format to match TiltCard expectations if necessary
+        const formattedProducts = data.map(p => ({
+          id: p._id,
+          title: p.title,
+          price: p.price,
+          image: p.images && p.images.length > 0 ? p.images[0] : '',
+          category: p.category?.name || 'Uncategorized',
+          inFlashSale: p.inFlashSale
+        }));
+        dispatch(setProducts(formattedProducts));
+      } catch (error) {
+        console.error('Failed to load products', error);
+      }
+    };
+    fetchAllProducts();
+
+    // Fetch Offers
+    const fetchOffers = async () => {
+      try {
+        const { data } = await axiosClient.get('/admin/offers');
+        const currentOffer = data.find(o => o.isActive && new Date(o.endTime) > new Date());
+        if (currentOffer) {
+          setActiveOffer(currentOffer);
+        }
+      } catch (error) {
+        console.error('Failed to load offers', error);
+      }
+    };
+    fetchOffers();
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!activeOffer) return;
+    
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const end = new Date(activeOffer.endTime).getTime();
+      const distance = end - now;
+
+      if (distance < 0) {
+        clearInterval(interval);
+        setActiveOffer(null);
+        return;
+      }
+
+      setTimeLeft({
+        days: Math.floor(distance / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((distance % (1000 * 60)) / 1000)
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [activeOffer]);
 
   return (
     <div className="w-full min-h-screen bg-[#FFFFFF] text-black font-sans selection:bg-[#008000] selection:text-white">
@@ -99,6 +151,7 @@ const Home = () => {
       </section>
 
       {/* Flash Sale Section */}
+      {activeOffer && (
       <section className="relative z-20 w-full bg-black py-24 px-8 overflow-hidden">
         {/* Neon green abstract glows */}
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#008000] rounded-full mix-blend-screen filter blur-[150px] opacity-30 animate-pulse"></div>
@@ -112,43 +165,54 @@ const Home = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-5xl font-black text-white tracking-tighter"
+                        className="text-5xl font-black text-white tracking-tighter uppercase"
                     >
-                        FLASH <span className="text-[#008000]">SALE</span>
+                        {activeOffer.title || 'FLASH SALE'}
                     </motion.h2>
-                    <p className="text-gray-400 mt-2 font-medium">Up to 50% off on premium gaming gear. Limited time only!</p>
+                    <p className="text-gray-400 mt-2 font-medium">Up to {activeOffer.discountPercentage}% off! Limited time only!</p>
                 </div>
 
-                {/* Fake Countdown Timer */}
+                {/* Countdown Timer */}
                 <div className="flex gap-4">
                     <div className="flex flex-col items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
-                        <span className="text-2xl font-black text-[#008000]">02</span>
+                        <span className="text-2xl font-black text-[#008000]">{String(timeLeft.days).padStart(2, '0')}</span>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Days</span>
                     </div>
                     <div className="flex flex-col items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
-                        <span className="text-2xl font-black text-[#008000]">14</span>
+                        <span className="text-2xl font-black text-[#008000]">{String(timeLeft.hours).padStart(2, '0')}</span>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hrs</span>
                     </div>
                     <div className="flex flex-col items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
-                        <span className="text-2xl font-black text-[#008000]">59</span>
+                        <span className="text-2xl font-black text-[#008000]">{String(timeLeft.minutes).padStart(2, '0')}</span>
                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Mins</span>
+                    </div>
+                    <div className="flex flex-col items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+                        <span className="text-2xl font-black text-[#008000]">{String(timeLeft.seconds).padStart(2, '0')}</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Secs</span>
                     </div>
                 </div>
             </div>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 place-items-center">
-                {/* Mock Flash Sale products */}
-                {filteredProducts.slice(-4).map((product, index) => (
-                    <motion.div key={product.id} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="relative group">
-                        <div className="absolute -top-3 -right-3 z-30 bg-red-600 text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] transform rotate-12">
-                            -30%
-                        </div>
-                        <TiltCard product={{...product, price: (product.price * 0.7).toFixed(2)}} />
-                    </motion.div>
-                ))}
+                {/* Flash Sale products from database */}
+                {filteredProducts.filter(p => p.inFlashSale).length > 0 ? (
+                    filteredProducts.filter(p => p.inFlashSale).slice(0, 4).map((product, index) => (
+                        <motion.div key={product.id} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }} className="relative group">
+                            <div className="absolute -top-3 -right-3 z-30 bg-red-600 text-white font-black text-xs px-3 py-1 rounded-full shadow-[0_0_15px_rgba(220,38,38,0.5)] transform rotate-12">
+                                -{activeOffer.discountPercentage}%
+                            </div>
+                            <TiltCard product={{...product, price: (product.price * (1 - activeOffer.discountPercentage / 100)).toFixed(2)}} />
+                        </motion.div>
+                    ))
+                ) : (
+                    <div className="col-span-full py-8 text-center text-gray-500 font-bold">
+                        No products have been added to this flash sale yet.
+                    </div>
+                )}
             </div>
         </div>
       </section>
+      )}
 
       {/* All Products Section */}
       <section id="products-section" className="relative z-20 w-full min-h-screen bg-white py-20 px-8">

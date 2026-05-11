@@ -22,7 +22,8 @@ const productSchema = new mongoose.Schema({
     analytics: {
         views: { type: Number, default: 0 },
         purchases: { type: Number, default: 0 }
-    }
+    },
+    inFlashSale: { type: Boolean, default: false }
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);

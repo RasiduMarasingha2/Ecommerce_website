@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const Seller = require('../../models/Seller');
 const generateToken = require('../../utils/generateToken');
 const sendEmail = require('../../utils/sendEmail');
 const crypto = require('crypto');
@@ -181,4 +182,58 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, forgotPassword, verifyOTP, resetPassword };
+// @desc    Register a new seller
+// @route   POST /api/auth/register-seller
+// @access  Public
+const registerSeller = async (req, res, next) => {
+    try {
+        const { name, email, password, phone, storeName } = req.body;
+        const userExists = await User.findOne({ email });
+
+        if (userExists) {
+            res.status(400);
+            return next(new Error('User already exists'));
+        }
+
+        const storeExists = await Seller.findOne({ storeName });
+        if (storeExists) {
+            res.status(400);
+            return next(new Error('Store name already exists. Please choose another one.'));
+        }
+
+        // Create User
+        const user = await User.create({ name, email, password, role: 'seller', phone });
+
+        if (user) {
+            // Create Seller Profile
+            const sellerProfile = await Seller.create({
+                user: user._id,
+                storeName: storeName,
+                sellerVerification: 'pending',
+                revenue: 0,
+                analytics: { totalViews: 0, totalSales: 0 }
+            });
+
+            // Link profile
+            user.sellerProfile = sellerProfile._id;
+            await user.save();
+
+            generateToken(res, user._id, user.role);
+            res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                role: user.role,
+                storeName: sellerProfile.storeName
+            });
+        } else {
+            res.status(400);
+            next(new Error('Invalid user data'));
+        }
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { registerUser, loginUser, logoutUser, forgotPassword, verifyOTP, resetPassword, registerSeller };

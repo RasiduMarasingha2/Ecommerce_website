@@ -20,7 +20,15 @@ const Login = () => {
         const { data } = await axiosClient.post('/auth/login', { email, password });
         dispatch(setCredentials(data));
         toast.success('Successfully logged in!');
-        navigate('/'); // Automatically move to home page
+        
+        // Redirect based on role
+        if (data.role === 'admin' || data.role === 'superadmin') {
+            navigate('/admin/dashboard');
+        } else if (data.role === 'seller') {
+            navigate('/seller/dashboard');
+        } else {
+            navigate('/'); // Automatically move to home page
+        }
     } catch (error) {
         toast.error(error.response?.data?.message || 'Failed to login');
     } finally {

@@ -49,6 +49,7 @@ app.use("/api", limiter);
 // Mount Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/products", require("./routes/productRoutes"));
 app.use("/api/seller", require("./routes/sellerRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/recommendation", require("./routes/recommendationRoutes"));

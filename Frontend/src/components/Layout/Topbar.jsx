@@ -115,9 +115,14 @@ const Topbar = () => {
                     {userInfo.name}
                 </button>
              ) : (
-                <button onClick={() => navigate('/login')} className="bg-black hover:bg-[#008000] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-300">
-                    Sign In
-                </button>
+                <div className="flex items-center space-x-2">
+                    <button onClick={() => navigate('/login')} className="bg-black hover:bg-[#008000] hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-300">
+                        Sign In
+                    </button>
+                    <button onClick={() => navigate('/register-seller')} className="bg-white border-2 border-[#008000] text-[#008000] hover:bg-[#008000] hover:text-white hover:shadow-[0_0_15px_rgba(0,128,0,0.5)] px-4 py-2 rounded-full text-sm font-bold transition-all duration-300">
+                        Join as Seller
+                    </button>
+                </div>
              )}
           </div>
 
