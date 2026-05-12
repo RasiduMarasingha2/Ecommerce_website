@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import UserLayout from './components/Layout/UserLayout.jsx'
 import './App.css'
 import Home from './pages/Home.jsx'
+import ProductDetails from './pages/ProductDetails.jsx'
 import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import ForgotPassword from './pages/auth/ForgotPassword.jsx'
@@ -35,6 +36,7 @@ const App = () => {
      <Routes>
        <Route path="/" element={<UserLayout />} >
          <Route index element={<Home />} />
+         <Route path="/product/:id" element={<ProductDetails />} />
          <Route path="/user" element={<UserDashboard />} />
        </Route>
        <Route path="/login" element={<Login />} />
