@@ -42,10 +42,13 @@ const AdminProducts = () => {
         }
     };
 
-    const filteredProducts = allProducts.filter(p => 
-        p.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        p.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredProducts = allProducts.filter(p => {
+        const search = searchTerm.replace('#', '').toLowerCase();
+        const shortId = (p.productId || p._id.slice(-5)).toLowerCase();
+        return (p.name || p.title)?.toLowerCase().includes(search) || 
+               p.category?.name?.toLowerCase().includes(search) ||
+               shortId.includes(search);
+    });
 
     return (
         <div className="space-y-6">
@@ -87,6 +90,7 @@ const AdminProducts = () => {
                         <thead className="bg-gray-900/50 text-gray-400 text-sm">
                             <tr>
                                 <th className="p-4 font-medium">Product</th>
+                                <th className="p-4 font-medium">Product ID</th>
                                 <th className="p-4 font-medium">Category</th>
                                 <th className="p-4 font-medium">Price</th>
                                 <th className="p-4 font-medium">Stock</th>
@@ -112,9 +116,23 @@ const AdminProducts = () => {
                                                 <FiImage className="text-gray-500 w-5 h-5" />
                                             )}
                                         </div>
-                                        <span className="font-medium truncate max-w-[200px]" title={product.name}>
-                                            {product.name}
+                                        <span className="font-medium truncate max-w-[200px]" title={product.name || product.title}>
+                                            {product.name || product.title}
                                         </span>
+                                    </td>
+                                    <td className="p-4">
+                                        <div className="flex items-center gap-2">
+                                            <code className="text-xs bg-gray-900 text-blue-400 px-2 py-1 rounded border border-gray-700 font-mono font-bold tracking-wider">
+                                                #{product.productId || product._id.slice(-5).toUpperCase()}
+                                            </code>
+                                            <button 
+                                                onClick={() => { navigator.clipboard.writeText(product.productId || product._id.slice(-5).toUpperCase()); toast.success('ID copied!') }} 
+                                                className="text-gray-500 hover:text-blue-400 transition-colors"
+                                                title="Copy ID"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            </button>
+                                        </div>
                                     </td>
                                     <td className="p-4">{product.category?.name || 'Uncategorized'}</td>
                                     <td className="p-4 font-medium text-white">${product.price.toFixed(2)}</td>

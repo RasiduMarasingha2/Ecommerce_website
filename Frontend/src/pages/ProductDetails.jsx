@@ -48,8 +48,14 @@ const ProductDetails = () => {
         window.scrollTo(0, 0);
     }, [id]);
 
-    const handleAddToCart = () => {
-        if (!product) return;
+    const handleAddToCart = (isBuyNow = false) => {
+        if (!userInfo) {
+            toast.error("Please sign up to continue.");
+            navigate('/register');
+            return false;
+        }
+
+        if (!product) return false;
         dispatch(addToCart({
             id: product._id,
             title: product.title,
@@ -70,11 +76,14 @@ const ProductDetails = () => {
         }
         
         toast.success(`${qty}x ${product.title} added to cart!`);
+        return true;
     };
 
     const handleBuyNow = () => {
-        handleAddToCart();
-        navigate('/cart'); // Or checkout page
+        const added = handleAddToCart(true);
+        if (added) {
+            navigate('/cart'); // Or checkout page
+        }
     };
 
     if (loading) {

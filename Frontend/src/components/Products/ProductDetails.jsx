@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import ProductGrid from "./ProductGrid";
 
 
@@ -58,6 +60,8 @@ const similarProducts = [
   ]
 
 const ProductDetails = () => {
+  const { userInfo } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   const [mainImage, setMainImage] = useState(
     selectedProduct.image[0].url
@@ -79,6 +83,12 @@ const ProductDetails = () => {
 
   // Add to cart handler
   const handleAddToCart = () => {
+    if (!userInfo) {
+      toast.error("Please sign up to continue.");
+      navigate('/register');
+      return;
+    }
+
     if (!selectedSize || !selectedColor) {
      toast.error("Please select size and color");
       return;

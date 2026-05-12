@@ -12,6 +12,7 @@ const SellerLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
+    const { userInfo } = useSelector((state) => state.auth);
 
     const menuItems = [
         { title: 'Dashboard', icon: <FiHome size={20} />, path: '/seller/dashboard' },
@@ -106,6 +107,10 @@ const SellerLayout = () => {
                         {location.pathname.split('/').pop().replace('-', ' ')}
                     </h1>
                     <div className="flex items-center space-x-4">
+                        <div className="hidden md:flex items-center gap-2 bg-gray-900 px-3 py-1.5 rounded-full border border-gray-800">
+                            <span className="text-xs font-bold text-gray-400">Seller ID:</span>
+                            <code className="text-sm font-mono font-bold text-[#008000]">#{userInfo?.accountId || userInfo?._id?.slice(-5).toUpperCase()}</code>
+                        </div>
                         <button onClick={handleLogout} className="md:hidden text-gray-500 hover:text-red-500">
                             <FiLogOut size={24} />
                         </button>

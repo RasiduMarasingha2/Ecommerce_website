@@ -95,6 +95,7 @@ const SellerProducts = () => {
                     <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th className="p-4 font-bold text-gray-600">Product</th>
+                            <th className="p-4 font-bold text-gray-600">Product ID</th>
                             <th className="p-4 font-bold text-gray-600">Price</th>
                             <th className="p-4 font-bold text-gray-600">Stock</th>
                             <th className="p-4 font-bold text-gray-600">Actions</th>
@@ -112,6 +113,20 @@ const SellerProducts = () => {
                                     <div>
                                         <p className="font-bold text-gray-800">{product.title}</p>
                                         <p className="text-xs text-gray-500">{product.category?.name || product.category}</p>
+                                    </div>
+                                </td>
+                                <td className="p-4">
+                                    <div className="flex items-center gap-2">
+                                        <code className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded border border-gray-200 font-mono font-bold tracking-wider">
+                                            #{product.productId || product._id.slice(-5).toUpperCase()}
+                                        </code>
+                                        <button 
+                                            onClick={() => { navigator.clipboard.writeText(product.productId || product._id.slice(-5).toUpperCase()); toast.success('ID copied to clipboard!') }} 
+                                            className="text-gray-400 hover:text-blue-500 transition-colors"
+                                            title="Copy ID"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        </button>
                                     </div>
                                 </td>
                                 <td className="p-4 font-bold text-gray-800">${product.price}</td>
@@ -150,29 +165,29 @@ const SellerProducts = () => {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Title</label>
-                                <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2 border rounded-xl" />
+                                <input type="text" required value={title} onChange={e => setTitle(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-xl text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#008000]/50" />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Description</label>
-                                <textarea required value={description} onChange={e => setDescription(e.target.value)} className="w-full px-4 py-2 border rounded-xl" rows="3"></textarea>
+                                <textarea required value={description} onChange={e => setDescription(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-xl text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#008000]/50" rows="3"></textarea>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1">Price ($)</label>
-                                    <input type="number" required value={price} onChange={e => setPrice(e.target.value)} className="w-full px-4 py-2 border rounded-xl" />
+                                    <input type="number" required value={price} onChange={e => setPrice(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-xl text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#008000]/50" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-bold text-gray-700 mb-1">Stock</label>
-                                    <input type="number" required value={stock} onChange={e => setStock(e.target.value)} className="w-full px-4 py-2 border rounded-xl" />
+                                    <input type="number" required value={stock} onChange={e => setStock(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-xl text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#008000]/50" />
                                 </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Category (Name or ID)</label>
-                                <input type="text" required value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-2 border rounded-xl" />
+                                <input type="text" required value={category} onChange={e => setCategory(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-xl text-black bg-white focus:outline-none focus:ring-2 focus:ring-[#008000]/50" />
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-1">Product Images (Multiple allowed)</label>
-                                <input type="file" required multiple onChange={handleFileChange} accept="image/*" className="w-full px-4 py-2 border rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#008000]/10 file:text-[#008000] hover:file:bg-[#008000]/20" />
+                                <input type="file" required multiple onChange={handleFileChange} accept="image/*" className="w-full px-4 py-2 border border-gray-300 rounded-xl text-black bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#008000]/10 file:text-[#008000] hover:file:bg-[#008000]/20" />
                             </div>
                             <div className="flex items-center gap-3 p-4 bg-gray-50 border border-gray-200 rounded-xl mt-4">
                                 <input 

@@ -12,9 +12,11 @@ const Home = () => {
   const dispatch = useDispatch();
   const filteredProducts = useSelector((state) => state.product.filteredProducts);
   const selectedCategory = useSelector((state) => state.product.selectedCategory);
+  const { userInfo } = useSelector((state) => state.auth);
 
   const [activeOffer, setActiveOffer] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
     // Fetch real products from backend
@@ -50,7 +52,28 @@ const Home = () => {
       }
     };
     fetchOffers();
-  }, [dispatch]);
+
+    // Fetch AI Recommendations if logged in
+    const fetchRecommendations = async () => {
+        if (!userInfo) return;
+        try {
+            const { data } = await axiosClient.get(`/recommendation/${userInfo._id}`);
+            const formattedRecs = data.recommendations.map(r => ({
+                id: r.product._id,
+                title: r.product.title,
+                price: r.product.price,
+                image: r.product.images && r.product.images.length > 0 ? r.product.images[0] : '',
+                category: r.product.category?.name || 'Uncategorized',
+                inFlashSale: r.product.inFlashSale,
+                aiScore: r.score
+            }));
+            setRecommendations(formattedRecs);
+        } catch (error) {
+            console.log("No AI recs available yet");
+        }
+    };
+    fetchRecommendations();
+  }, [dispatch, userInfo]);
 
   useEffect(() => {
     if (!activeOffer) return;
@@ -122,6 +145,44 @@ const Home = () => {
           </motion.button>
         </div>
       </section>
+
+      {/* AI Recommendations Section */}
+      {recommendations.length > 0 && (
+      <section className="relative z-20 w-full bg-[#f4f4f6] py-16 px-8 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto">
+            <div className="flex justify-between items-end mb-10">
+                <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-[#f57224]/10 rounded-full flex items-center justify-center">
+                        <span className="text-xl">✨</span>
+                    </div>
+                    <motion.h2 
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="text-3xl font-extrabold text-black tracking-tight"
+                    >
+                        Recommended For You
+                    </motion.h2>
+                </div>
+                <span className="text-[#f57224] font-bold cursor-pointer hover:underline text-sm">See More &rarr;</span>
+            </div>
+            
+            <div className="flex gap-6 overflow-x-auto pb-8 custom-scrollbar">
+                {recommendations.map((product, index) => (
+                    <motion.div key={product.id} className="flex-shrink-0 w-72" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }}>
+                        <TiltCard product={product} />
+                        <div className="mt-4 text-center">
+                            <span className="text-xs font-bold text-white bg-gradient-to-r from-[#f57224] to-[#d0611e] px-3 py-1.5 rounded-full shadow-sm">
+                                🎯 AI Match Score: {product.aiScore}
+                            </span>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </div>
+      </section>
+      )}
 
       {/* Best Selling Products Section */}
       <section className="relative z-20 w-full bg-white py-20 px-8">

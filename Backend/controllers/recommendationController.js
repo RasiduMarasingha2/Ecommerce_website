@@ -1,5 +1,6 @@
 const User = require('../models/User');
-const { getRecommendationsFromProlog } = require('../services/prologService');
+const Product = require('../models/Product');
+const { getRecommendationsFromProlog, syncProductFacts } = require('../services/prologService');
 
 // @desc    Save user onboarding answers
 // @route   POST /api/recommendation/onboarding
@@ -53,21 +54,32 @@ const getRecommendations = async (req, res) => {
         // Convert Map to basic object
         const preferences = Object.fromEntries(user.recommendationAnswers);
 
+        // Fetch all products and sync
+        const allProducts = await Product.find().populate('category');
+        syncProductFacts(allProducts);
+
         // Call Prolog Engine
         const rankedProducts = await getRecommendationsFromProlog(user._id.toString(), preferences);
 
-        // rankedProducts is an array: [[Score, "ProductId"], ...]
-        // In a real scenario, you would do a MongoDB `Product.find({ _id: { $in: productIds } })` here
-        // and map the scores to the real database objects.
-        // For now, we return the raw engine output which contains the ID strings from productFacts.pl
+        // Fetch actual products
+        const productIds = rankedProducts.map(item => item[1]);
+        const productsFromDb = await Product.find({ _id: { $in: productIds } }).populate('category');
+
+        // Create a map to keep the order from Prolog
+        const productMap = {};
+        productsFromDb.forEach(p => { productMap[p._id.toString()] = p; });
+
+        const recommendations = rankedProducts
+            .filter(item => productMap[item[1]]) // ensure it exists
+            .map(item => ({
+                score: item[0],
+                product: productMap[item[1]]
+            }));
 
         res.status(200).json({
             success: true,
-            count: rankedProducts.length,
-            recommendations: rankedProducts.map(item => ({
-                score: item[0],
-                productId: item[1]
-            }))
+            count: recommendations.length,
+            recommendations
         });
 
     } catch (error) {

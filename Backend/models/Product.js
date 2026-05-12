@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
+    productId: { type: String, default: () => Math.floor(10000 + Math.random() * 90000).toString() },
     title: { type: String, required: true },
     description: { type: String, required: true },
     images: [{ type: String }],

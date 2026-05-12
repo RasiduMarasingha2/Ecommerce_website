@@ -1,5 +1,39 @@
 const { exec } = require('child_process');
 const path = require('path');
+const fs = require('fs');
+
+/**
+ * Generates productFacts.pl from real MongoDB products.
+ */
+const syncProductFacts = (products) => {
+    let facts = '% product(Id, Name, Category, Budget, Brand, Purpose)\n\n';
+    
+    products.forEach(p => {
+        const id = p._id.toString();
+        const name = (p.title || 'unknown').replace(/'/g, ""); // escape single quotes
+        const category = p.category?.name?.toLowerCase().replace(/'/g, "") || 'other';
+        
+        // determine budget
+        let budget = 'medium';
+        if (p.price < 50) budget = 'low';
+        else if (p.price > 200) budget = 'high';
+        
+        // determine brand (from tags or default any)
+        let brand = 'any';
+        if (p.tags && p.tags.includes('premium')) brand = 'premium';
+        if (p.tags && p.tags.includes('budget')) brand = 'budget';
+        
+        // determine purpose
+        let purpose = 'casual';
+        if (category.includes('gaming') || (p.tags && p.tags.includes('gaming'))) purpose = 'gaming';
+        if (category.includes('work') || category.includes('electronics') || (p.tags && p.tags.includes('work'))) purpose = 'work';
+
+        facts += `product('${id}', '${name}', '${category}', '${budget}', '${brand}', '${purpose}').\n`;
+    });
+
+    const productFactsPath = path.join(__dirname, '../ai/productFacts.pl');
+    fs.writeFileSync(productFactsPath, facts, 'utf8');
+};
 
 /**
  * Executes a Prolog query with dynamic user facts injected at runtime.
@@ -64,5 +98,6 @@ const getRecommendationsFromProlog = (userId, preferences) => {
 };
 
 module.exports = {
-    getRecommendationsFromProlog
+    getRecommendationsFromProlog,
+    syncProductFacts
 };

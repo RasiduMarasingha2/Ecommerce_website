@@ -1,11 +1,13 @@
 import { motion, useMotionValue, useTransform } from 'framer-motion';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import { addToCart } from '../../redux/slices/cartSlice';
 import { toast } from 'sonner';
 
 const TiltCard = ({ product }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.auth);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   
@@ -21,6 +23,11 @@ const TiltCard = ({ product }) => {
   const handleAddToCart = (e) => {
     e.stopPropagation();
     e.preventDefault();
+    if (!userInfo) {
+      toast.error("Please sign up to continue.");
+      navigate('/register');
+      return;
+    }
     dispatch(addToCart({ ...product, qty: 1 }));
     toast.success(`${product.title} added to cart!`);
   };

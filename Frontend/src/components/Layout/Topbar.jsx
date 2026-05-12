@@ -111,7 +111,11 @@ const Topbar = () => {
              </button>
              
              {userInfo ? (
-                <button onClick={() => navigate('/user')} className="text-sm font-bold text-gray-700 hover:text-[#008000]">
+                <button onClick={() => {
+                    if (userInfo.role === 'seller') navigate('/seller/dashboard');
+                    else if (userInfo.role === 'admin' || userInfo.role === 'superadmin') navigate('/admin/dashboard');
+                    else navigate('/user');
+                }} className="text-sm font-bold text-gray-700 hover:text-[#008000]">
                     {userInfo.name}
                 </button>
              ) : (

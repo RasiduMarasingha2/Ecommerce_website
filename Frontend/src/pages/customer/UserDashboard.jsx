@@ -4,12 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import axiosClient from '../../api/axiosClient';
+import AIOnboarding from '../../components/AIOnboarding';
 
 const UserDashboard = () => {
     const { userInfo } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('overview');
+    const [recommendations, setRecommendations] = useState([]);
+    const [loadingRecs, setLoadingRecs] = useState(false);
+    const [showOnboarding, setShowOnboarding] = useState(false);
 
     // Protect route
     React.useEffect(() => {
@@ -22,6 +27,24 @@ const UserDashboard = () => {
         dispatch(logout());
         toast.success("Logged out successfully");
         navigate('/');
+    };
+
+    React.useEffect(() => {
+        if (activeTab === 'ai' && userInfo) {
+            fetchRecommendations();
+        }
+    }, [activeTab, userInfo]);
+
+    const fetchRecommendations = async () => {
+        setLoadingRecs(true);
+        try {
+            const { data } = await axiosClient.get(`/recommendation/${userInfo._id}`);
+            setRecommendations(data.recommendations || []);
+        } catch (error) {
+            console.log("No recommendations found or error", error);
+        } finally {
+            setLoadingRecs(false);
+        }
     };
 
     if (!userInfo) return null;
@@ -59,6 +82,10 @@ const UserDashboard = () => {
                         </div>
                         <h2 className="text-xl font-bold text-black">Hello, {userInfo.name}</h2>
                         <p className="text-sm text-gray-500">{userInfo.email}</p>
+                        <div className="mt-2 inline-flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
+                            <span className="text-xs font-bold text-gray-500">Account ID:</span>
+                            <code className="text-sm font-mono font-bold text-[#008000]">#{userInfo.accountId || userInfo._id?.slice(-5).toUpperCase()}</code>
+                        </div>
                     </div>
 
                     <nav className="flex-1 space-y-2">
@@ -159,12 +186,16 @@ const UserDashboard = () => {
                                         </div>
                                         <p className="text-gray-400 font-medium mb-8 max-w-lg">Unlock the power of SWI-Prolog. Answer a few quick questions and let our logical inference engine find the perfect products tailored exactly for your needs.</p>
                                         
-                                        <button className="px-8 py-4 bg-[#008000] text-white font-black rounded-xl hover:shadow-[0_0_30px_rgba(0,128,0,0.6)] transform hover:-translate-y-1 transition-all duration-300 flex items-center space-x-2">
-                                            <span>Configure My Preferences</span>
+                                        <button 
+                                            onClick={() => setShowOnboarding(true)}
+                                            className="px-8 py-4 bg-[#008000] text-white font-black rounded-xl hover:shadow-[0_0_30px_rgba(0,128,0,0.6)] transform hover:-translate-y-1 transition-all duration-300 flex items-center space-x-2">
+                                            <span>{recommendations.length > 0 ? 'Retake Questionnaire' : 'Configure My Preferences'}</span>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                                         </button>
                                     </div>
                                 </div>
+
+
                             </motion.div>
                         )}
 
@@ -194,6 +225,15 @@ const UserDashboard = () => {
                 </div>
 
             </div>
+
+            <AIOnboarding 
+                isOpen={showOnboarding} 
+                onClose={() => setShowOnboarding(false)} 
+                onComplete={() => {
+                    setShowOnboarding(false);
+                    fetchRecommendations();
+                }} 
+            />
         </div>
     );
 };

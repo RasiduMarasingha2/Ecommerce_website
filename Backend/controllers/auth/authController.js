@@ -27,6 +27,7 @@ const registerUser = async (req, res, next) => {
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
+                accountId: user.accountId,
             });
         } else {
             res.status(400);
@@ -43,7 +44,7 @@ const registerUser = async (req, res, next) => {
 const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: new RegExp(`^${email}$`, 'i') });
 
         if (user && (await user.matchPassword(password))) {
             generateToken(res, user._id, user.role);
@@ -52,6 +53,7 @@ const loginUser = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                accountId: user.accountId,
             });
         } else {
             res.status(401);
@@ -79,7 +81,7 @@ const logoutUser = (req, res) => {
 const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email: new RegExp(`^${email}$`, 'i') });
 
         if (!user) {
             res.status(404);
@@ -135,7 +137,7 @@ const verifyOTP = async (req, res, next) => {
         const hashedOTP = crypto.createHash('sha256').update(otp).digest('hex');
 
         const user = await User.findOne({
-            email,
+            email: new RegExp(`^${email}$`, 'i'),
             resetPasswordOTP: hashedOTP,
             resetPasswordExpires: { $gt: Date.now() }
         });
@@ -160,7 +162,7 @@ const resetPassword = async (req, res, next) => {
         const hashedOTP = crypto.createHash('sha256').update(otp).digest('hex');
 
         const user = await User.findOne({
-            email,
+            email: new RegExp(`^${email}$`, 'i'),
             resetPasswordOTP: hashedOTP,
             resetPasswordExpires: { $gt: Date.now() }
         });
@@ -225,6 +227,7 @@ const registerSeller = async (req, res, next) => {
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
+                accountId: user.accountId,
                 storeName: sellerProfile.storeName
             });
         } else {
