@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { Environment, Float, ContactShadows } from '@react-three/drei';
+import Spline from '@splinetool/react-spline';
 import { motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../redux/slices/productSlice';
@@ -19,11 +18,11 @@ const Home = () => {
   const [recommendations, setRecommendations] = useState([]);
 
   useEffect(() => {
-    // Fetch real products from backend
+   
     const fetchAllProducts = async () => {
       try {
         const { data } = await axiosClient.get('/products');
-        // Transform backend product format to match TiltCard expectations if necessary
+        
         const formattedProducts = data.map(p => ({
           id: p._id,
           title: p.title,
@@ -103,27 +102,21 @@ const Home = () => {
   return (
     <div className="w-full min-h-screen bg-[#FFFFFF] text-black font-sans selection:bg-[#008000] selection:text-white">
       {/* 3D Hero Section */}
-      <section className="relative w-full h-[90vh] overflow-hidden bg-gradient-to-b from-gray-50 to-white">
-        {/* Background 3D Canvas */}
+      <section className="relative w-full h-[100vh] overflow-hidden bg-black">
+        {/* Background 3D Spline Canvas */}
         <div className="absolute inset-0 z-0">
-          <Canvas shadows camera={{ position: [0, 0, 8], fov: 45 }}>
-            <ambientLight intensity={0.7} />
-            <directionalLight position={[10, 10, 5]} intensity={1} castShadow />
-            <Environment preset="city" />
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-               <FloatingProductModel position={[0, 0, 0]} />
-            </Float>
-            <ContactShadows position={[0, -2, 0]} opacity={0.4} scale={10} blur={2} far={4} />
-          </Canvas>
+          <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
+          {/* Subtle overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-black/30 pointer-events-none"></div>
         </div>
 
         {/* Foreground UI Overlay */}
-        <div className="relative z-10 flex flex-col items-center justify-center h-full pointer-events-none px-4 text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center h-full pointer-events-none px-4 text-center mt-[-5%]">
           <motion.h1 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, type: "spring", stiffness: 100 }}
-            className="text-6xl md:text-8xl font-black text-black tracking-tighter drop-shadow-sm"
+            className="text-7xl md:text-9xl font-black text-white tracking-tighter drop-shadow-2xl"
           >
             NEXT GEN
           </motion.h1>
@@ -131,17 +124,17 @@ const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-4xl md:text-5xl font-bold text-[#008000] mt-2 tracking-tight"
+            className="text-4xl md:text-5xl font-bold text-[#00ff00] mt-2 tracking-widest uppercase drop-shadow-lg"
           >
-            GAMING EXPERIENCE
+            Gaming Experience
           </motion.h2>
           
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="mt-12 px-10 py-4 rounded-full bg-black text-white font-bold text-lg pointer-events-auto shadow-xl hover:bg-[#008000] hover:shadow-[0_0_25px_rgba(0,128,0,0.5)] transition-all duration-300"
+            className="mt-14 px-12 py-5 rounded-full bg-white text-black font-black text-xl pointer-events-auto shadow-[0_0_40px_rgba(255,255,255,0.3)] hover:bg-[#008000] hover:text-white hover:shadow-[0_0_40px_rgba(0,255,0,0.6)] transition-all duration-300 uppercase tracking-widest"
           >
-            Shop Now
+            Explore Now
           </motion.button>
         </div>
       </section>
