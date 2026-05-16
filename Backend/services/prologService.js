@@ -2,28 +2,25 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-/**
- * Generates productFacts.pl from real MongoDB products.
- */
+
 const syncProductFacts = (products) => {
     let facts = '% product(Id, Name, Category, Budget, Brand, Purpose)\n\n';
-    
+
     products.forEach(p => {
         const id = p._id.toString();
         const name = (p.title || 'unknown').replace(/'/g, ""); // escape single quotes
         const category = p.category?.name?.toLowerCase().replace(/'/g, "") || 'other';
-        
-        // determine budget
+
         let budget = 'medium';
         if (p.price < 50) budget = 'low';
         else if (p.price > 200) budget = 'high';
-        
-        // determine brand (from tags or default any)
+
+
         let brand = 'any';
         if (p.tags && p.tags.includes('premium')) brand = 'premium';
         if (p.tags && p.tags.includes('budget')) brand = 'budget';
-        
-        // determine purpose
+
+
         let purpose = 'casual';
         if (category.includes('gaming') || (p.tags && p.tags.includes('gaming'))) purpose = 'gaming';
         if (category.includes('work') || category.includes('electronics') || (p.tags && p.tags.includes('work'))) purpose = 'work';
@@ -43,20 +40,19 @@ const syncProductFacts = (products) => {
  */
 const getRecommendationsFromProlog = (userId, preferences) => {
     return new Promise((resolve, reject) => {
-        // 1. Build the dynamic assertion facts string
+
         let factsStr = '';
         for (const [key, value] of Object.entries(preferences)) {
-            // value is expected to be a string/atom, e.g., 'gaming'
+
             factsStr += `assertz(user_pref('${userId}', ${key}, '${value}')), `;
         }
 
-        // 2. Build the final query: Assert facts, then query recommend, then halt.
-        // E.g., assertz(user_pref('u1', category, 'gaming')), recommend('u1', Recs), write(Recs), halt.
+
         const query = `${factsStr} recommend('${userId}', Recs), write(Recs), halt.`;
 
         const prologScriptPath = path.join(__dirname, '../ai/recommendation.pl');
-        
-        // Use double quotes for the query to avoid conflicts in windows
+
+
         const command = `swipl -q -s "${prologScriptPath}" -g "${query}"`;
 
         exec(command, (error, stdout, stderr) => {
@@ -65,24 +61,20 @@ const getRecommendationsFromProlog = (userId, preferences) => {
                 return reject(error);
             }
             if (stderr && !stderr.includes('Warning')) {
-                // Some versions of SWI-Prolog output warnings to stderr. Ignore them unless it's a real error.
+
                 console.error(`Prolog Stderr: ${stderr}`);
             }
 
             try {
-                // stdout should be something like: [[100,p1],[70,p2],[50,p9]]
-                // We need to parse this string into a JavaScript array.
-                // It looks like a JSON array, but might have spacing or lack quotes around strings.
-                
+
+
                 let output = stdout.trim();
                 if (!output || output === '[]') {
                     return resolve([]);
                 }
 
-                // Convert Prolog list format to valid JSON string
-                // Example: [[100,p1],[70,p2]] -> [[100,"p1"],[70,"p2"]]
                 output = output.replace(/([a-zA-Z0-9_]+)/g, (match) => {
-                    // Don't quote numbers
+
                     if (!isNaN(match)) return match;
                     return `"${match}"`;
                 });

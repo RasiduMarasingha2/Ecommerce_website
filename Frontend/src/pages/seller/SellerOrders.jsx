@@ -57,12 +57,12 @@ const SellerOrders = () => {
                                     <p className="text-xs text-gray-500">{order.user?.email}</p>
                                 </td>
                                 <td className="p-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                <td className="p-4 font-bold text-blue-600">${order.totalPrice.toFixed(2)}</td>
+                                <td className="p-4 font-bold text-blue-600">LKR {order.totalPrice.toFixed(2)}</td>
                                 <td className="p-4">
                                     <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                                        order.status === 'Processing' ? 'bg-orange-100 text-orange-600' :
+                                        order.status === 'Processing' ? 'bg-[#008000]/10 text-[#005a00]' :
                                         order.status === 'Shipped' ? 'bg-blue-100 text-blue-600' :
-                                        'bg-green-100 text-green-600'
+                                        'bg-[#008000]/10 text-[#005a00]'
                                     }`}>
                                         {order.status}
                                     </span>

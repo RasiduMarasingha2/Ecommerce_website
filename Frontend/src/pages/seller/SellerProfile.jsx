@@ -58,8 +58,8 @@ const SellerProfile = () => {
                     <div>
                         <label className="block text-sm font-bold text-gray-700 mb-2">Verification Status</label>
                         <span className={`px-3 py-1 rounded-full text-sm font-bold ${
-                            profile?.sellerVerification === 'approved' ? 'bg-green-100 text-green-700' : 
-                            profile?.sellerVerification === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'
+                            profile?.sellerVerification === 'approved' ? 'bg-[#008000]/10 text-green-700' : 
+                            profile?.sellerVerification === 'pending' ? 'bg-[#008000]/10 text-orange-700' : 'bg-red-100 text-red-700'
                         }`}>
                             {profile?.sellerVerification?.toUpperCase() || 'PENDING'}
                         </span>

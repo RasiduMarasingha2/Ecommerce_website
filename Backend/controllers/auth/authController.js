@@ -26,6 +26,7 @@ const registerUser = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                address: user.address,
                 role: user.role,
                 accountId: user.accountId,
             });
@@ -52,6 +53,8 @@ const loginUser = async (req, res, next) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phone: user.phone,
+                address: user.address,
                 role: user.role,
                 accountId: user.accountId,
             });
@@ -226,6 +229,7 @@ const registerSeller = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
+                address: user.address,
                 role: user.role,
                 accountId: user.accountId,
                 storeName: sellerProfile.storeName

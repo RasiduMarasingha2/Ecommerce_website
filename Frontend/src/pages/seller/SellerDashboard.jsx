@@ -24,7 +24,7 @@ const SellerDashboard = () => {
     }
 
     const statCards = [
-        { title: 'Total Revenue', value: `$${stats.totalRevenue.toFixed(2)}`, icon: <FiDollarSign />, color: 'from-blue-400 to-blue-600' },
+        { title: 'Total Revenue', value: `LKR ${stats.totalRevenue.toFixed(2)}`, icon: <FiDollarSign />, color: 'from-blue-400 to-blue-600' },
         { title: 'Total Sales', value: stats.totalSales, icon: <FiTrendingUp />, color: 'from-green-400 to-green-600' },
         { title: 'Total Products', value: stats.totalProducts, icon: <FiBox />, color: 'from-purple-400 to-purple-600' },
         { title: 'Total Views', value: stats.totalViews, icon: <FiEye />, color: 'from-orange-400 to-orange-600' }
@@ -82,7 +82,7 @@ const SellerDashboard = () => {
                                 </defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6b7280'}} />
-                                <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280'}} tickFormatter={(value) => `$${value}`} />
+                                <YAxis axisLine={false} tickLine={false} tick={{fill: '#6b7280'}} tickFormatter={(value) => `LKR ${value}`} />
                                 <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                                 <Area type="monotone" dataKey="revenue" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
                             </AreaChart>
@@ -105,11 +105,11 @@ const SellerDashboard = () => {
                                     <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-black text-blue-600">${order.totalPrice.toFixed(2)}</p>
+                                    <p className="font-black text-blue-600">LKR {order.totalPrice.toFixed(2)}</p>
                                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                                        order.status === 'Processing' ? 'bg-orange-100 text-orange-600' :
+                                        order.status === 'Processing' ? 'bg-[#008000]/10 text-[#005a00]' :
                                         order.status === 'Shipped' ? 'bg-blue-100 text-blue-600' :
-                                        'bg-green-100 text-green-600'
+                                        'bg-[#008000]/10 text-[#005a00]'
                                     }`}>
                                         {order.status}
                                     </span>

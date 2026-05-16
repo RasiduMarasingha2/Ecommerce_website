@@ -1,26 +1,6 @@
 function CartContents() {
 
-  const cartProducts = [
-    {
-      productId: 1,
-      name: "T-shirt",
-      size: "M",
-      color: "Red",
-      price: 20,
-      quantity: 2,
-      imageUrl: "https://via.placeholder.com/150"
-    },
-     {
-      productId: 2,
-      name: "shirt",
-      size: "L",
-      color: "Blue",
-      price: 22,
-      quantity: 2,
-      imageUrl: "https://via.placeholder.com/150"
-    }
-  ];
-
+  
   return (
     <div>
       {cartProducts.map((product, index) => (

@@ -29,10 +29,10 @@ const AdminDashboard = () => {
     }
 
     const cards = [
-        { title: 'Total Revenue', value: `$${stats.totalRevenue.toLocaleString()}`, icon: FiDollarSign, color: 'text-green-500', bg: 'bg-green-500/10' },
+        { title: 'Total Revenue', value: `LKR ${stats.totalRevenue.toLocaleString()}`, icon: FiDollarSign, color: 'text-[#008000]', bg: 'bg-[#008000]/10' },
         { title: 'Total Users', value: stats.usersCount, icon: FiUsers, color: 'text-blue-500', bg: 'bg-blue-500/10' },
         { title: 'Products', value: stats.productsCount, icon: FiShoppingBag, color: 'text-purple-500', bg: 'bg-purple-500/10' },
-        { title: 'Total Orders', value: stats.ordersCount, icon: FiTrendingUp, color: 'text-orange-500', bg: 'bg-orange-500/10' },
+        { title: 'Total Orders', value: stats.ordersCount, icon: FiTrendingUp, color: 'text-[#008000]', bg: 'bg-[#008000]/10' },
     ];
 
     return (
@@ -119,10 +119,10 @@ const AdminDashboard = () => {
                                 <tr key={order._id} className="hover:bg-gray-700/50 transition-colors">
                                     <td className="p-4">#{order._id.substring(0, 8)}...</td>
                                     <td className="p-4">{order.user?.name || 'Guest'}</td>
-                                    <td className="p-4">${order.totalPrice.toFixed(2)}</td>
+                                    <td className="p-4">LKR {order.totalPrice.toFixed(2)}</td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                            order.status === 'Delivered' ? 'bg-green-500/20 text-green-400' : 
+                                            order.status === 'Delivered' ? 'bg-[#008000]/20 text-[#008000]' : 
                                             order.status === 'Processing' ? 'bg-blue-500/20 text-blue-400' : 
                                             'bg-yellow-500/20 text-yellow-400'
                                         }`}>

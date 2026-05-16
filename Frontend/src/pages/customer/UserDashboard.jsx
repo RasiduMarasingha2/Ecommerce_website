@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../../redux/slices/authSlice';
+import { logout, setCredentials } from '../../redux/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import axiosClient from '../../api/axiosClient';
@@ -15,6 +15,45 @@ const UserDashboard = () => {
     const [recommendations, setRecommendations] = useState([]);
     const [loadingRecs, setLoadingRecs] = useState(false);
     const [showOnboarding, setShowOnboarding] = useState(false);
+
+    const [profileData, setProfileData] = useState({
+        name: userInfo?.name || '',
+        phone: userInfo?.phone || '',
+        street: userInfo?.address?.street || '',
+        city: userInfo?.address?.city || '',
+        state: userInfo?.address?.state || '',
+        zip: userInfo?.address?.zip || '',
+        country: userInfo?.address?.country || 'Sri Lanka'
+    });
+    const [updatingProfile, setUpdatingProfile] = useState(false);
+
+    const handleProfileChange = (e) => {
+        setProfileData({ ...profileData, [e.target.name]: e.target.value });
+    };
+
+    const handleProfileSubmit = async (e) => {
+        e.preventDefault();
+        setUpdatingProfile(true);
+        try {
+            const { data } = await axiosClient.put('/users/profile', {
+                name: profileData.name,
+                phone: profileData.phone,
+                address: {
+                    street: profileData.street,
+                    city: profileData.city,
+                    state: profileData.state,
+                    zip: profileData.zip,
+                    country: profileData.country
+                }
+            });
+            dispatch(setCredentials(data));
+            toast.success("Profile updated successfully!");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update profile");
+        } finally {
+            setUpdatingProfile(false);
+        }
+    };
 
     // Protect route
     React.useEffect(() => {
@@ -203,10 +242,10 @@ const UserDashboard = () => {
                             <motion.div key="settings" variants={contentVariants} initial="hidden" animate="visible" exit="exit">
                                 <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                                     <h3 className="text-2xl font-black text-black mb-6">Account Settings</h3>
-                                    <form className="space-y-6 max-w-xl">
+                                    <form onSubmit={handleProfileSubmit} className="space-y-6 max-w-xl">
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-2">Full Name</label>
-                                            <input type="text" defaultValue={userInfo.name} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            <input type="text" name="name" value={profileData.name} onChange={handleProfileChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-2">Email Address</label>
@@ -214,9 +253,36 @@ const UserDashboard = () => {
                                         </div>
                                         <div>
                                             <label className="block text-sm font-bold text-gray-700 mb-2">Phone Number</label>
-                                            <input type="tel" placeholder="+94 7X XXX XXXX" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            <input type="tel" name="phone" value={profileData.phone} onChange={handleProfileChange} placeholder="+94 7X XXX XXXX" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
                                         </div>
-                                        <button type="button" className="px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-[#008000] hover:shadow-[0_0_20px_rgba(0,128,0,0.4)] transition-all">Save Changes</button>
+                                        
+                                        <h4 className="font-bold text-gray-800 pt-4 border-t border-gray-100">Shipping Address</h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-bold text-gray-700 mb-2">Street</label>
+                                                <input type="text" name="street" value={profileData.street} onChange={handleProfileChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-bold text-gray-700 mb-2">City</label>
+                                                <input type="text" name="city" value={profileData.city} onChange={handleProfileChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-bold text-gray-700 mb-2">State/Province</label>
+                                                <input type="text" name="state" value={profileData.state} onChange={handleProfileChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-bold text-gray-700 mb-2">Zip/Postal Code</label>
+                                                <input type="text" name="zip" value={profileData.zip} onChange={handleProfileChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-bold text-gray-700 mb-2">Country</label>
+                                                <input type="text" name="country" value={profileData.country} onChange={handleProfileChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-[#008000] focus:border-transparent outline-none transition-all text-black" />
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" disabled={updatingProfile} className="px-8 py-3 bg-black text-white font-bold rounded-xl hover:bg-[#008000] hover:shadow-[0_0_20px_rgba(0,128,0,0.4)] transition-all disabled:opacity-50">
+                                            {updatingProfile ? 'Saving...' : 'Save Changes'}
+                                        </button>
                                     </form>
                                 </div>
                             </motion.div>

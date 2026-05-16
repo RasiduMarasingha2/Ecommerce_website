@@ -75,15 +75,25 @@ const ProductDetails = () => {
              }).catch(e => console.error("Sync error", e));
         }
         
-        toast.success(`${qty}x ${product.title} added to cart!`);
+        toast.success(`${qty}x ${product.title} added to cart!`, { duration: 1000 });
         return true;
     };
 
     const handleBuyNow = () => {
-        const added = handleAddToCart(true);
-        if (added) {
-            navigate('/cart'); // Or checkout page
+        if (!userInfo) {
+            toast.error("Please sign in to continue.");
+            navigate('/login');
+            return;
         }
+        navigate('/checkout', {
+            state: {
+                product,
+                qty,
+                selectedColor,
+                selectedSize,
+                price: currentPrice
+            }
+        });
     };
 
     if (loading) {
@@ -101,12 +111,12 @@ const ProductDetails = () => {
     const currentPrice = product.price * (1 - (product.discount || 0) / 100);
 
     return (
-        <div className="min-h-screen pt-24 pb-12 bg-[#f4f4f6] font-sans selection:bg-green-500 selection:text-white">
+        <div className="min-h-screen pt-24 pb-12 bg-[#f4f4f6] font-sans selection:bg-[#008000] selection:text-white">
             <div className="container mx-auto px-4 max-w-7xl">
                 
                 {/* Breadcrumbs */}
                 <div className="flex items-center text-sm text-gray-500 mb-6 gap-2">
-                    <Link to="/" className="hover:text-green-600 transition">Home</Link>
+                    <Link to="/" className="hover:text-[#005a00] transition">Home</Link>
                     <span>/</span>
                     <span className="capitalize">{product.category?.name || 'Category'}</span>
                     <span>/</span>
@@ -170,10 +180,10 @@ const ProductDetails = () => {
 
                         <div className="bg-gray-50/50 p-4 rounded-xl mb-6 border border-gray-100">
                             <div className="flex items-end gap-3 mb-1">
-                                <span className="text-4xl font-black text-[#f57224]">${currentPrice.toFixed(2)}</span>
+                                <span className="text-4xl font-black text-[#008000]">LKR {currentPrice.toFixed(2)}</span>
                                 {product.discount > 0 && (
                                     <>
-                                        <span className="text-lg text-gray-400 line-through mb-1">${product.price.toFixed(2)}</span>
+                                        <span className="text-lg text-gray-400 line-through mb-1">LKR {product.price.toFixed(2)}</span>
                                         <span className="text-sm font-bold text-white bg-red-500 px-2 py-0.5 rounded mb-1">-{product.discount}%</span>
                                     </>
                                 )}
@@ -189,7 +199,7 @@ const ProductDetails = () => {
                                         <button 
                                             key={idx}
                                             onClick={() => setSelectedColor(color)}
-                                            className={`px-4 py-2 border rounded-md font-medium text-sm transition-all ${selectedColor === color ? 'border-[#f57224] text-[#f57224] bg-orange-50' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}
+                                            className={`px-4 py-2 border rounded-md font-medium text-sm transition-all ${selectedColor === color ? 'border-[#008000] text-[#008000] bg-orange-50' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}
                                         >
                                             {color}
                                         </button>
@@ -206,7 +216,7 @@ const ProductDetails = () => {
                                         <button 
                                             key={idx}
                                             onClick={() => setSelectedSize(size)}
-                                            className={`px-4 py-2 border rounded-md font-medium text-sm transition-all ${selectedSize === size ? 'border-[#f57224] text-[#f57224] bg-orange-50' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}
+                                            className={`px-4 py-2 border rounded-md font-medium text-sm transition-all ${selectedSize === size ? 'border-[#008000] text-[#008000] bg-orange-50' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}
                                         >
                                             {size}
                                         </button>
@@ -234,10 +244,10 @@ const ProductDetails = () => {
 
                         {/* Action Buttons */}
                         <div className="flex gap-3 mt-auto">
-                            <button onClick={handleBuyNow} disabled={product.stock === 0} className="flex-1 bg-[#2abbe8] text-white py-3 rounded-md font-bold text-lg hover:bg-[#25a5d8] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button onClick={handleBuyNow} disabled={product.stock === 0} className="flex-1 bg-black text-white py-3 rounded-md font-bold text-lg hover:bg-gray-800 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                                 Buy Now
                             </button>
-                            <button onClick={handleAddToCart} disabled={product.stock === 0} className="flex-1 bg-[#f57224] text-white py-3 rounded-md font-bold text-lg hover:bg-[#d0611e] transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button onClick={handleAddToCart} disabled={product.stock === 0} className="flex-1 bg-[#008000] text-white py-3 rounded-md font-bold text-lg hover:bg-[#005a00] transition-colors shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                                 <FiShoppingCart /> Add to Cart
                             </button>
                         </div>
@@ -256,10 +266,10 @@ const ProductDetails = () => {
                                         <p className="font-bold text-gray-800 text-sm">Standard Delivery</p>
                                         <p className="text-xs text-gray-500 mt-1">3 - 5 Working Days</p>
                                     </div>
-                                    <span className="ml-auto font-bold text-sm">$4.99</span>
+                                    <span className="ml-auto font-bold text-sm">LKR 4.99</span>
                                 </div>
                                 <div className="flex gap-3">
-                                    <FiCheckCircle className="text-xl text-green-500 mt-1 flex-shrink-0" />
+                                    <FiCheckCircle className="text-xl text-[#008000] mt-1 flex-shrink-0" />
                                     <div>
                                         <p className="font-bold text-gray-800 text-sm">Cash on Delivery Available</p>
                                     </div>
@@ -359,7 +369,7 @@ const ProductDetails = () => {
                                         </div>
                                         <span className="text-xs text-gray-400">{new Date(review.createdAt).toLocaleDateString()}</span>
                                     </div>
-                                    <p className="text-sm text-gray-500 mb-2">by <span className="font-bold text-gray-700">{review.name}</span> <span className="text-green-500 ml-2">✓ Verified Purchase</span></p>
+                                    <p className="text-sm text-gray-500 mb-2">by <span className="font-bold text-gray-700">{review.name}</span> <span className="text-[#008000] ml-2">✓ Verified Purchase</span></p>
                                     <p className="text-gray-800">{review.comment}</p>
                                 </div>
                             ))}
@@ -378,7 +388,7 @@ const ProductDetails = () => {
                                         <img src={p.images?.[0] || 'https://via.placeholder.com/150'} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
                                     </div>
                                     <p className="text-sm font-medium text-gray-800 truncate">{p.title}</p>
-                                    <p className="text-[#f57224] font-black mt-1">${(p.price * (1 - (p.discount||0)/100)).toFixed(2)}</p>
+                                    <p className="text-[#008000] font-black mt-1">LKR {(p.price * (1 - (p.discount||0)/100)).toFixed(2)}</p>
                                 </Link>
                             ))}
                         </div>

@@ -93,10 +93,10 @@ const AdminOrders = () => {
                                         <p className="text-xs text-gray-400">{order.user?.email}</p>
                                     </td>
                                     <td className="p-4">{new Date(order.createdAt).toLocaleDateString()}</td>
-                                    <td className="p-4 font-medium text-white">${order.totalPrice.toFixed(2)}</td>
+                                    <td className="p-4 font-medium text-white">LKR {order.totalPrice.toFixed(2)}</td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${
-                                            order.status === 'Delivered' ? 'bg-green-500/20 text-green-400' : 
+                                            order.status === 'Delivered' ? 'bg-[#008000]/20 text-[#008000]' : 
                                             order.status === 'Processing' ? 'bg-blue-500/20 text-blue-400' : 
                                             order.status === 'Cancelled' ? 'bg-red-500/20 text-red-400' :
                                             'bg-yellow-500/20 text-yellow-400'

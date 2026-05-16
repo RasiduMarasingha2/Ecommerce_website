@@ -135,10 +135,10 @@ const AdminProducts = () => {
                                         </div>
                                     </td>
                                     <td className="p-4">{product.category?.name || 'Uncategorized'}</td>
-                                    <td className="p-4 font-medium text-white">${product.price.toFixed(2)}</td>
+                                    <td className="p-4 font-medium text-white">LKR {product.price.toFixed(2)}</td>
                                     <td className="p-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                            product.stock > 10 ? 'bg-green-500/20 text-green-400' : 
+                                            product.stock > 10 ? 'bg-[#008000]/20 text-[#008000]' : 
                                             product.stock > 0 ? 'bg-yellow-500/20 text-yellow-400' : 
                                             'bg-red-500/20 text-red-400'
                                         }`}>

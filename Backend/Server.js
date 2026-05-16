@@ -14,22 +14,29 @@ const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const initSocket = require("./services/socket/socketHandler");
 
-// Load Environment Variables
+
 dotenv.config();
 
-// Connect to Database
+
 connectDB();
 
 const app = express();
 const server = http.createServer(app);
 
-// Initialize Socket.io
+
 initSocket(server);
 
-// Security and Utility Middlewares
+
 app.use(helmet());
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: [
+        process.env.CLIENT_URL,
+        'http://localhost:5173',
+        'http://localhost:5174',
+        'http://localhost:5175',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174'
+    ].filter(Boolean),
     credentials: true
 }));
 app.use(express.json());
@@ -37,16 +44,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 
-// Rate Limiting
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    max: 100,
     standardHeaders: true,
     legacyHeaders: false,
 });
 app.use("/api", limiter);
 
-// Mount Routes
+
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));
@@ -54,8 +61,9 @@ app.use("/api/cart", require("./routes/cartRoutes"));
 app.use("/api/seller", require("./routes/sellerRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/recommendation", require("./routes/recommendationRoutes"));
+app.use("/api/orders", require("./routes/orderRoutes"));
 
-// Error Handling Middlewares
+
 app.use(notFound);
 app.use(errorHandler);
 

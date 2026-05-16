@@ -29,9 +29,9 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
             key: 'budget',
             title: "What's your typical budget range?",
             options: [
-                { value: 'low', label: 'Budget Friendly (< $50)', icon: '💵' },
-                { value: 'medium', label: 'Mid-Range ($50 - $200)', icon: '💰' },
-                { value: 'high', label: 'Premium (> $200)', icon: '💎' }
+                { value: 'low', label: 'Budget Friendly (< LKR 50)', icon: '💵' },
+                { value: 'medium', label: 'Mid-Range (LKR 50 - LKR 200)', icon: '💰' },
+                { value: 'high', label: 'Premium (> LKR 200)', icon: '💎' }
             ]
         },
         {
@@ -62,7 +62,7 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
     };
 
     const handleSubmit = async () => {
-        // Validation
+
         const isComplete = Object.values(preferences).every(v => v !== '');
         if (!isComplete) {
             toast.error("Please answer all questions or click Skip.");
@@ -94,13 +94,13 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
 
     return (
         <AnimatePresence>
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md px-4"
             >
-                <motion.div 
+                <motion.div
                     initial={{ scale: 0.9, y: 20 }}
                     animate={{ scale: 1, y: 0 }}
                     exit={{ scale: 0.9, y: 20 }}
@@ -135,11 +135,10 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
                                         <button
                                             key={opt.value}
                                             onClick={() => handleSelect(currentQ.key, opt.value)}
-                                            className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${
-                                                preferences[currentQ.key] === opt.value 
-                                                    ? 'border-[#008000] bg-green-50 shadow-sm' 
+                                            className={`p-4 rounded-xl border-2 flex items-center gap-4 transition-all ${preferences[currentQ.key] === opt.value
+                                                    ? 'border-[#008000] bg-green-50 shadow-sm'
                                                     : 'border-gray-100 bg-white hover:border-gray-300'
-                                            }`}
+                                                }`}
                                         >
                                             <span className="text-2xl">{opt.icon}</span>
                                             <span className="font-bold text-gray-700">{opt.label}</span>
@@ -150,7 +149,7 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
                         </AnimatePresence>
 
                         <div className="mt-8 flex justify-between">
-                            <button 
+                            <button
                                 onClick={() => setStep(Math.max(0, step - 1))}
                                 disabled={step === 0}
                                 className="px-6 py-2 rounded-lg font-bold text-gray-500 hover:bg-gray-100 disabled:opacity-50 transition-colors"
@@ -159,7 +158,7 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
                             </button>
 
                             {step === questions.length - 1 ? (
-                                <button 
+                                <button
                                     onClick={handleSubmit}
                                     disabled={loading || !preferences[currentQ.key]}
                                     className="px-8 py-2 rounded-lg font-bold bg-[#008000] text-white hover:bg-green-700 hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2"
@@ -167,7 +166,7 @@ const AIOnboarding = ({ isOpen, onClose, onComplete }) => {
                                     {loading ? 'Analyzing...' : 'Find My Matches'}
                                 </button>
                             ) : (
-                                <button 
+                                <button
                                     onClick={() => setStep(Math.min(questions.length - 1, step + 1))}
                                     disabled={!preferences[currentQ.key]}
                                     className="px-8 py-2 rounded-lg font-bold bg-black text-white hover:bg-gray-800 disabled:opacity-50 transition-colors"

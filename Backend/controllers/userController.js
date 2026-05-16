@@ -1,8 +1,6 @@
 const User = require('../models/User');
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
+
 const getUserProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user._id);
@@ -26,9 +24,7 @@ const getUserProfile = async (req, res, next) => {
     }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
+
 const updateUserProfile = async (req, res, next) => {
     try {
         const user = await User.findById(req.user._id);
@@ -44,7 +40,7 @@ const updateUserProfile = async (req, res, next) => {
             }
 
             if (req.file) {
-                user.avatar = req.file.path; // Cloudinary URL
+                user.avatar = req.file.path;
             }
 
             const updatedUser = await user.save();
@@ -53,7 +49,11 @@ const updateUserProfile = async (req, res, next) => {
                 _id: updatedUser._id,
                 name: updatedUser.name,
                 email: updatedUser.email,
+                role: updatedUser.role,
+                accountId: updatedUser.accountId,
                 avatar: updatedUser.avatar,
+                phone: updatedUser.phone,
+                address: updatedUser.address,
             });
         } else {
             res.status(404);

@@ -40,7 +40,7 @@ const AdminLayout = () => {
             >
                 <div className="h-16 flex items-center justify-center border-b border-gray-800">
                     <Link to="/" className="text-xl font-black text-white tracking-tighter">
-                        {sidebarOpen ? <><span className="text-white">NEXT</span> <span className="text-[#008000]">GEN</span></> : <span className="text-[#008000]">NG</span>}
+                        {sidebarOpen ? <><span className="text-white">LU</span><span className="text-[#008000]">V</span><span className="text-white">ION</span></> : <><span className="text-white">L</span><span className="text-[#008000]">V</span></>}
                     </Link>
                 </div>
                 

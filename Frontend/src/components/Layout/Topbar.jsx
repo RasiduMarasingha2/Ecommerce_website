@@ -51,7 +51,7 @@ const Topbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
             <span className="text-2xl font-extrabold tracking-tighter text-black">
-              NEXT <span className="text-[#008000]">GEN</span>
+              LU<span className="text-[#008000]">V</span>ION
             </span>
           </div>
 
@@ -170,7 +170,7 @@ const Topbar = () => {
                               </div>
                               <div className="flex-1">
                                   <h4 className="font-bold text-sm text-black">{item.title}</h4>
-                                  <p className="text-[#008000] font-bold mt-1">${item.price}</p>
+                                  <p className="text-[#008000] font-bold mt-1">LKR {item.price}</p>
                                   <div className="flex justify-between items-center mt-2">
                                       <span className="text-xs text-gray-500 font-medium">Qty: {item.qty}</span>
                                       <button onClick={() => dispatch(removeFromCart(item.id))} className="text-xs text-red-500 font-bold hover:underline">Remove</button>
@@ -191,7 +191,12 @@ const Topbar = () => {
                           ${cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
                       </span>
                   </div>
-                  <button className="w-full py-4 rounded-xl bg-black text-white font-bold hover:bg-[#008000] hover:shadow-[0_0_20px_rgba(0,128,0,0.3)] transition-all duration-300">
+                  <button 
+                      onClick={() => {
+                          setIsCartOpen(false);
+                          navigate('/checkout', { state: { cartItems } });
+                      }}
+                      className="w-full py-4 rounded-xl bg-black text-white font-bold hover:bg-[#008000] hover:shadow-[0_0_20px_rgba(0,128,0,0.3)] transition-all duration-300">
                       Proceed to Checkout
                   </button>
               </div>

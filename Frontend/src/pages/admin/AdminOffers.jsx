@@ -97,7 +97,7 @@ const AdminOffers = () => {
                         {offers.map((offer) => (
                             <tr key={offer._id} className="border-b border-gray-700 hover:bg-gray-700/50">
                                 <td className="p-4 font-bold text-white">{offer.title}</td>
-                                <td className="p-4 text-green-400 font-bold">{offer.discountPercentage}% OFF</td>
+                                <td className="p-4 text-[#008000] font-bold">{offer.discountPercentage}% OFF</td>
                                 <td className="p-4">
                                     <p className="text-sm">Start: {new Date(offer.startTime).toLocaleDateString()}</p>
                                     <p className="text-sm text-gray-400">End: {new Date(offer.endTime).toLocaleDateString()}</p>
@@ -105,7 +105,7 @@ const AdminOffers = () => {
                                 <td className="p-4">
                                     <button 
                                         onClick={() => toggleStatus(offer)}
-                                        className={`px-3 py-1 rounded-full text-xs font-bold ${offer.isActive ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+                                        className={`px-3 py-1 rounded-full text-xs font-bold ${offer.isActive ? 'bg-[#008000]/20 text-[#008000]' : 'bg-red-500/20 text-red-400'}`}
                                     >
                                         {offer.isActive ? 'Active' : 'Inactive'}
                                     </button>

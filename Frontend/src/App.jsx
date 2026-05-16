@@ -7,6 +7,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import ForgotPassword from './pages/auth/ForgotPassword.jsx'
 import UserDashboard from './pages/customer/UserDashboard.jsx'
+import Checkout from './pages/Checkout.jsx'
 import { Toaster } from 'sonner'
 import AdminRoute from './components/routes/AdminRoute.jsx'
 import AdminLayout from './layouts/AdminLayout.jsx'
@@ -37,6 +38,7 @@ const App = () => {
        <Route path="/" element={<UserLayout />} >
          <Route index element={<Home />} />
          <Route path="/product/:id" element={<ProductDetails />} />
+         <Route path="/checkout" element={<Checkout />} />
          <Route path="/user" element={<UserDashboard />} />
        </Route>
        <Route path="/login" element={<Login />} />

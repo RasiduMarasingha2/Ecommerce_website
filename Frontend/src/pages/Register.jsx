@@ -77,7 +77,7 @@ const Register = () => {
                     </div>
                 </motion.div>
                 <h2 className="text-3xl font-black text-black tracking-tight">Sign Up</h2>
-                <p className="text-gray-500 mt-2 text-sm font-medium">Join the next generation.</p>
+                <p className="text-gray-500 mt-2 text-sm font-medium">Join Luvion.</p>
             </div>
 
             <form onSubmit={submitHandler} className="space-y-5">

@@ -10,7 +10,7 @@ const TiltCard = ({ product }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
+
   const rotateX = useTransform(y, [-100, 100], [10, -10]);
   const rotateY = useTransform(x, [-100, 100], [-10, 10]);
 
@@ -29,7 +29,7 @@ const TiltCard = ({ product }) => {
       return;
     }
     dispatch(addToCart({ ...product, qty: 1 }));
-    toast.success(`${product.title} added to cart!`);
+    toast.success(`${product.title} added to cart!`, { duration: 900 });
   };
 
   return (
@@ -42,21 +42,21 @@ const TiltCard = ({ product }) => {
       <Link to={`/product/${product.id}`} className="block h-full cursor-pointer">
         <div className="w-full h-48 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
           {product.image ? (
-              <img src={product.image} alt={product.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+            <img src={product.image} alt={product.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
           ) : (
-              <span className="text-gray-400 font-bold">IMAGE PREVIEW</span>
+            <span className="text-gray-400 font-bold">IMAGE PREVIEW</span>
           )}
         </div>
         <div className="absolute bottom-4 left-4 right-4">
           <h3 className="text-xl font-bold text-black truncate">{product.title}</h3>
-          <p className="text-[#008000] font-bold mt-1">${product.price}</p>
-          
-          <motion.button 
+          <p className="text-[#008000] font-bold mt-1">LKR {product.price}</p>
+
+          <motion.button
             onClick={handleAddToCart}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="mt-4 w-full py-2.5 rounded-xl bg-black text-white font-medium hover:bg-[#008000] hover:shadow-[0_0_15px_rgba(0,128,0,0.4)] transition-all duration-300"
-        >
+          >
             Add to Cart
           </motion.button>
         </div>

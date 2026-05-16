@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../redux/slices/authSlice';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiHome, FiBox, FiUsers, FiSettings, FiLogOut, FiMenu, FiX, FiShoppingCart, FiMessageSquare, FiDollarSign } from 'react-icons/fi';
@@ -41,7 +41,7 @@ const SellerLayout = () => {
             >
                 <div className="p-6 flex items-center justify-between border-b border-gray-800">
                     <Link to="/" className="text-2xl font-black tracking-tight whitespace-nowrap text-white">
-                        {isSidebarOpen ? <><span className="text-white">NEXT</span> <span className="text-[#008000]">GEN</span></> : <span className="text-[#008000]">NG</span>}
+                        {isSidebarOpen ? <><span className="text-white">LU</span><span className="text-[#008000]">V</span><span className="text-white">ION</span></> : <><span className="text-white">L</span><span className="text-[#008000]">V</span></>}
                     </Link>
                     <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-gray-300 hover:text-white transition-colors">
                         <FiMenu size={24} />
