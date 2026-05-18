@@ -5,9 +5,7 @@ const Theme = require('../../models/Theme');
 const HomepageContent = require('../../models/HomepageContent');
 const Offer = require('../../models/Offer');
 
-// @desc    Get dashboard stats
-// @route   GET /api/admin/dashboard
-// @access  Private/Admin
+
 const getDashboardStats = async (req, res, next) => {
     try {
         const usersCount = await User.countDocuments();
@@ -195,9 +193,9 @@ const getOffers = async (req, res, next) => {
     }
 };
 
-// @desc    Create an offer
-// @route   POST /api/admin/offers
-// @access  Private/Admin
+// @desc    Create an off
+// @route   POST /api/adm
+///@access  Private/Admin
 const createOffer = async (req, res, next) => {
     try {
         const offer = await Offer.create(req.body);
@@ -223,9 +221,7 @@ const updateOffer = async (req, res, next) => {
     }
 };
 
-// @desc    Delete an offer
-// @route   DELETE /api/admin/offers/:id
-// @access  Private/Admin
+
 const deleteOffer = async (req, res, next) => {
     try {
         const offer = await Offer.findByIdAndDelete(req.params.id);

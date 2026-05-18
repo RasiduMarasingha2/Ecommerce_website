@@ -10,11 +10,11 @@ const seedSeller = async () => {
         await mongoose.connect(process.env.MONGODB_URL);
         console.log('MongoDB connected for seeding seller.');
 
-        // Delete existing if any
+        
         await User.deleteOne({ email: 'seller@seller.com' });
         await Seller.deleteOne({ storeName: 'Premium Seller Store' });
 
-        // Create Seller User
+        
         const sellerUser = await User.create({
             name: 'Default Seller',
             email: 'seller@seller.com',
@@ -37,7 +37,7 @@ const seedSeller = async () => {
             }
         });
 
-        // Link profile to user
+        
         sellerUser.sellerProfile = sellerProfile._id;
         await sellerUser.save();
 

@@ -1,8 +1,6 @@
 const Cart = require('../models/Cart');
 
-// @desc    Sync cart with database
-// @route   POST /api/cart
-// @access  Private
+
 const syncCart = async (req, res, next) => {
     try {
         const { cartItems, totalPrice } = req.body;
@@ -27,9 +25,7 @@ const syncCart = async (req, res, next) => {
     }
 };
 
-// @desc    Get user cart
-// @route   GET /api/cart
-// @access  Private
+
 const getCart = async (req, res, next) => {
     try {
         const cart = await Cart.findOne({ user: req.user._id }).populate('cartItems.product');

@@ -2,9 +2,7 @@ const Product = require('../models/Product');
 const Review = require('../models/Review');
 const mongoose = require('mongoose');
 
-// @desc    Fetch all public products
-// @route   GET /api/products
-// @access  Public
+
 const getProducts = async (req, res, next) => {
     try {
         const products = await Product.find({}).populate('category', 'name').populate('seller', 'storeName').sort({ createdAt: -1 });
@@ -14,9 +12,7 @@ const getProducts = async (req, res, next) => {
     }
 };
 
-// @desc    Fetch single product by ID
-// @route   GET /api/products/:id
-// @access  Public
+
 const getProductById = async (req, res, next) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -31,7 +27,7 @@ const getProductById = async (req, res, next) => {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // Fetch reviews separately
+        
         const reviews = await Review.find({ product: product._id })
             .populate('user', 'name avatar')
             .sort({ createdAt: -1 });
@@ -42,9 +38,7 @@ const getProductById = async (req, res, next) => {
     }
 };
 
-// @desc    Fetch related products
-// @route   GET /api/products/:id/related
-// @access  Public
+
 const getRelatedProducts = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -61,16 +55,14 @@ const getRelatedProducts = async (req, res, next) => {
     }
 };
 
-// @desc    Create new review
-// @route   POST /api/products/:id/reviews
-// @access  Private
+
 const createProductReview = async (req, res, next) => {
     try {
         const { rating, comment } = req.body;
         const product = await Product.findById(req.params.id);
 
         if (product) {
-            // Check if user already reviewed
+            
             const alreadyReviewed = await Review.findOne({
                 product: product._id,
                 user: req.user._id
@@ -88,7 +80,7 @@ const createProductReview = async (req, res, next) => {
                 product: product._id
             });
 
-            // Update product stats
+           
             const reviews = await Review.find({ product: product._id });
             product.numReviews = reviews.length;
             product.ratings = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;

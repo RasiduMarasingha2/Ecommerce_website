@@ -3,9 +3,7 @@ const Seller = require('../../models/Seller');
 const Category = require('../../models/Category');
 const mongoose = require('mongoose');
 
-// @desc    Create a product
-// @route   POST /api/seller/products
-// @access  Private/Seller
+
 const createProduct = async (req, res, next) => {
     try {
         const seller = await Seller.findOne({ user: req.user._id });
@@ -16,12 +14,12 @@ const createProduct = async (req, res, next) => {
 
         let { title, description, price, stock, category, inFlashSale } = req.body;
         
-        // Smart Category Handling
+        
         if (category && !mongoose.Types.ObjectId.isValid(category)) {
-            // Find category by name
+           
             let existingCategory = await Category.findOne({ name: { $regex: new RegExp(`^${category}$`, 'i') } });
             if (!existingCategory) {
-                // Auto-create category if it doesn't exist
+                
                 existingCategory = await Category.create({ name: category });
             }
             category = existingCategory._id;
@@ -57,18 +55,16 @@ const createProduct = async (req, res, next) => {
 
 const Order = require('../../models/Order');
 
-// @desc    Get Seller Dashboard Stats
-// @route   GET /api/seller/dashboard
-// @access  Private/Seller
+
 const getSellerDashboard = async (req, res, next) => {
     try {
         const seller = await Seller.findOne({ user: req.user._id });
         if (!seller) return res.status(404).json({ message: 'Seller not found' });
 
-        // Calculate stats
+        
         const productCount = await Product.countDocuments({ seller: seller._id });
         
-        // Find orders containing this seller's products
+       
         const orders = await Order.find({ 'orderItems.product': { $in: await Product.find({ seller: seller._id }).distinct('_id') } })
             .sort({ createdAt: -1 })
             .limit(10)
@@ -88,9 +84,7 @@ const getSellerDashboard = async (req, res, next) => {
     }
 };
 
-// @desc    Get Seller Products
-// @route   GET /api/seller/products
-// @access  Private/Seller
+
 const getSellerProducts = async (req, res, next) => {
     try {
         const seller = await Seller.findOne({ user: req.user._id });
@@ -103,9 +97,7 @@ const getSellerProducts = async (req, res, next) => {
     }
 };
 
-// @desc    Update a product
-// @route   PUT /api/seller/products/:id
-// @access  Private/Seller
+
 const updateProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -123,9 +115,7 @@ const updateProduct = async (req, res, next) => {
     }
 };
 
-// @desc    Delete a product
-// @route   DELETE /api/seller/products/:id
-// @access  Private/Seller
+
 const deleteProduct = async (req, res, next) => {
     try {
         const product = await Product.findById(req.params.id);
@@ -143,9 +133,7 @@ const deleteProduct = async (req, res, next) => {
     }
 };
 
-// @desc    Get Seller Orders
-// @route   GET /api/seller/orders
-// @access  Private/Seller
+
 const getSellerOrders = async (req, res, next) => {
     try {
         const seller = await Seller.findOne({ user: req.user._id });
@@ -161,9 +149,7 @@ const getSellerOrders = async (req, res, next) => {
     }
 };
 
-// @desc    Get Seller Profile
-// @route   GET /api/seller/profile
-// @access  Private/Seller
+
 const getSellerProfile = async (req, res, next) => {
     try {
         const seller = await Seller.findOne({ user: req.user._id }).populate('user', 'name email phone');
@@ -174,9 +160,7 @@ const getSellerProfile = async (req, res, next) => {
     }
 };
 
-// @desc    Update Seller Profile
-// @route   PUT /api/seller/profile
-// @access  Private/Seller
+
 const updateSellerProfile = async (req, res, next) => {
     try {
         const seller = await Seller.findOneAndUpdate(

@@ -10,7 +10,7 @@ const seedAdmin = async () => {
         await mongoose.connect(process.env.MONGODB_URL);
         console.log('MongoDB connected for seeding.');
 
-        // Check if admin already exists
+       
         let adminUser = await User.findOne({ email: 'admin@admin.com' });
 
         if (adminUser) {
@@ -19,13 +19,13 @@ const seedAdmin = async () => {
             adminUser = await User.create({
                 name: 'Super Admin',
                 email: 'admin@admin.com',
-                password: 'admin123', // Mongoose middleware will hash this
+                password: 'admin123', 
                 role: 'admin'
             });
             console.log('Admin user created successfully.');
         }
 
-        // Ensure Admin profile exists
+       
         let adminProfile = await Admin.findOne({ user: adminUser._id });
         if (!adminProfile) {
             adminProfile = await Admin.create({
@@ -35,7 +35,6 @@ const seedAdmin = async () => {
             });
             console.log('Admin profile created successfully.');
             
-            // Link back to user
             adminUser.adminProfile = adminProfile._id;
             await adminUser.save();
         }

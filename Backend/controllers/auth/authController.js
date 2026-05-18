@@ -4,9 +4,7 @@ const generateToken = require('../../utils/generateToken');
 const sendEmail = require('../../utils/sendEmail');
 const crypto = require('crypto');
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
+
 const registerUser = async (req, res, next) => {
     try {
         const { name, email, password, role, phone } = req.body;
@@ -39,9 +37,7 @@ const registerUser = async (req, res, next) => {
     }
 };
 
-// @desc    Auth user & get token
-// @route   POST /api/auth/login
-// @access  Public
+
 const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -67,9 +63,7 @@ const loginUser = async (req, res, next) => {
     }
 };
 
-// @desc    Logout user / clear cookie
-// @route   POST /api/auth/logout
-// @access  Private
+
 const logoutUser = (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
@@ -78,9 +72,7 @@ const logoutUser = (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 };
 
-// @desc    Forgot Password - Send Email OTP
-// @route   POST /api/auth/forgot-password
-// @access  Public
+
 const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
@@ -99,7 +91,7 @@ const forgotPassword = async (req, res, next) => {
         user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        // Send Email
+        
         const html = `
             <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; border-radius: 10px;">
                 <h2 style="color: #008000;">Password Reset Request</h2>
@@ -110,7 +102,7 @@ const forgotPassword = async (req, res, next) => {
                 <p>If you did not request this, please ignore this email.</p>
             </div>
         `;
-
+           
         try {
             await sendEmail({
                 email: user.email,
@@ -131,9 +123,7 @@ const forgotPassword = async (req, res, next) => {
     }
 };
 
-// @desc    Verify OTP
-// @route   POST /api/auth/verify-otp
-// @access  Public
+
 const verifyOTP = async (req, res, next) => {
     try {
         const { email, otp } = req.body;
@@ -156,9 +146,7 @@ const verifyOTP = async (req, res, next) => {
     }
 };
 
-// @desc    Reset Password
-// @route   POST /api/auth/reset-password
-// @access  Public
+
 const resetPassword = async (req, res, next) => {
     try {
         const { email, otp, newPassword } = req.body;
@@ -175,7 +163,7 @@ const resetPassword = async (req, res, next) => {
             return next(new Error('Invalid or expired OTP'));
         }
 
-        // Set new password (will be hashed by pre-save hook)
+        
         user.password = newPassword;
         user.resetPasswordOTP = undefined;
         user.resetPasswordExpires = undefined;
@@ -187,9 +175,7 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
-// @desc    Register a new seller
-// @route   POST /api/auth/register-seller
-// @access  Public
+
 const registerSeller = async (req, res, next) => {
     try {
         const { name, email, password, phone, storeName } = req.body;
@@ -206,11 +192,11 @@ const registerSeller = async (req, res, next) => {
             return next(new Error('Store name already exists. Please choose another one.'));
         }
 
-        // Create User
+     
         const user = await User.create({ name, email, password, role: 'seller', phone });
 
         if (user) {
-            // Create Seller Profile
+           
             const sellerProfile = await Seller.create({
                 user: user._id,
                 storeName: storeName,
@@ -219,7 +205,7 @@ const registerSeller = async (req, res, next) => {
                 analytics: { totalViews: 0, totalSales: 0 }
             });
 
-            // Link profile
+          
             user.sellerProfile = sellerProfile._id;
             await user.save();
 

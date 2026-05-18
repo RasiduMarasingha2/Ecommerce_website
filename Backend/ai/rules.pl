@@ -22,7 +22,6 @@ match_purpose(User, ProductId, Score) :-
     (P == ProductPurpose -> Score = 30 ; Score = 0).
 
 % Brand Match (+10)
-% If product brand is 'any', it always matches.
 match_brand(User, ProductId, Score) :-
     user_pref(User, brand, Br),
     product(ProductId, _, _, _, ProductBrand, _),
@@ -35,4 +34,4 @@ product_score(User, ProductId, TotalScore) :-
     match_budget(User, ProductId, S2),
     match_purpose(User, ProductId, S3),
     match_brand(User, ProductId, S4),
-    TotalScore is S1 + S2 + S3 + S4.
+    TotalScore is S1 + S2 + S3 + S4. 
